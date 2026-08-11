@@ -1,0 +1,6 @@
+{
+  "name": "Aura Academics",
+  "description": "Comprehensive intelligent academic platform featuring landing showcase, interactive student dashboard with collapsible sidebar, predictive grade analytics, course manager, study schedule planner, and AI Tutor.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
