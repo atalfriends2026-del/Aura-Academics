@@ -1,7 +1,9 @@
 import express from "express";
 import path from "path";
+import http from "http";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel, Modality, GenerateVideosOperation } from "@google/genai";
+import { WebSocketServer } from "ws";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -9,7 +11,8 @@ dotenv.config();
 const app = express();
 const PORT = 3000;
 
-app.use(express.json());
+// Increase payload limit for image uploads
+app.use(express.json({ limit: "25mb" }));
 
 // Initialize Gemini Client
 const ai = new GoogleGenAI({
@@ -21,18 +24,36 @@ const ai = new GoogleGenAI({
   },
 });
 
+// Helper to format Gemini API errors cleanly
+function formatGeminiError(error: any, fallbackMessage: string) {
+  const errMsg = String(error?.message || error || "");
+  const errStatus = error?.status || error?.code;
+  const isQuota =
+    errStatus === 429 ||
+    errMsg.includes("429") ||
+    errMsg.includes("RESOURCE_EXHAUSTED") ||
+    errMsg.toLowerCase().includes("quota");
+
+  if (isQuota) {
+    return "API Rate Limit / Quota Exceeded: You have temporarily reached your Gemini API quota for this model. Please wait a moment and try again.";
+  }
+  return errMsg || fallbackMessage;
+}
+
 // Health check route
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", app: "Aura Academics" });
 });
 
-// AI Tutor Chat Route
+// ----------------------------------------------------
+// 1. AI Tutor Endpoint (Multi-turn, Image Analysis, High Thinking, Fast Mode)
+// ----------------------------------------------------
 app.post("/api/ai/tutor", async (req, res) => {
   try {
-    const { prompt, courseContext, mode } = req.body;
+    const { prompt, courseContext, mode, enableThinking, imageBase64, imageMimeType, history } = req.body;
 
-    if (!prompt) {
-      return res.status(400).json({ error: "Prompt is required" });
+    if (!prompt && !imageBase64) {
+      return res.status(400).json({ error: "Prompt or image is required" });
     }
 
     let systemInstruction = `You are Aura AI, an expert academic tutor and study companion for college and high school students. 
@@ -53,55 +74,262 @@ Use markdown formatting for code blocks, bullet points, and key formulas. Keep r
       systemInstruction += `\nMode: Provide constructive, supportive feedback on the submitted work. Point out strengths, identify areas for improvement, and offer actionable suggestions.`;
     }
 
+    // Select model based on requirements
+    let model = "gemini-3.5-flash"; // default general task model
+
+    if (enableThinking) {
+      // High Thinking model for complex academic proofs & math
+      model = "gemini-3.1-pro-preview";
+    } else if (mode === "fast") {
+      // Fast mode model
+      model = "gemini-3.1-flash-lite";
+    } else if (imageBase64) {
+      // Image analysis model
+      model = "gemini-3.1-pro-preview";
+    }
+
+    // Build content payload
+    const parts: any[] = [];
+    if (imageBase64) {
+      parts.push({
+        inlineData: {
+          mimeType: imageMimeType || "image/png",
+          data: imageBase64,
+        },
+      });
+    }
+    if (prompt) {
+      parts.push({ text: prompt });
+    }
+
+    const config: any = {
+      systemInstruction,
+      temperature: 0.7,
+    };
+
+    if (enableThinking) {
+      config.thinkingConfig = {
+        thinkingLevel: ThinkingLevel.HIGH,
+      };
+      // Note: maxOutputTokens must NOT be set when high thinking is enabled
+    }
+
+    let contentsPayload: any = { parts };
+
+    // If chat history is provided, build conversation context
+    if (history && Array.isArray(history) && history.length > 0) {
+      const formattedHistory = history.map((msg: any) => ({
+        role: msg.role === "user" ? "user" : "model",
+        parts: [{ text: msg.text }],
+      }));
+      formattedHistory.push({
+        role: "user",
+        parts,
+      });
+      contentsPayload = formattedHistory;
+    }
+
     const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction,
-        temperature: 0.7,
-      },
+      model,
+      contents: contentsPayload,
+      config,
     });
 
-    res.json({ text: response.text });
+    res.json({ text: response.text, modelUsed: model });
   } catch (error: any) {
     console.error("Gemini API Error:", error);
     res.status(500).json({
-      error: "Failed to fetch response from Aura AI Tutor.",
+      error: formatGeminiError(error, "Failed to fetch response from Aura AI Tutor."),
       details: error.message || String(error),
     });
   }
 });
 
-// Predictive GPA Insights Route
-app.post("/api/ai/predict-gpa", async (req, res) => {
+// ----------------------------------------------------
+// 2. Search Grounding Endpoint (googleSearch tool with gemini-3.5-flash)
+// ----------------------------------------------------
+app.post("/api/ai/search-grounding", async (req, res) => {
   try {
-    const { currentGpa, courses } = req.body;
-
-    const prompt = `Current GPA: ${currentGpa}.
-Courses: ${JSON.stringify(courses)}.
-Provide a concise 3-bullet point AI academic performance report:
-1. Strengths & High Performance Areas
-2. Subject Risk Warning or Focus Area
-3. Actionable recommendation to achieve a 4.0 GPA this term.`;
+    const { query } = req.body;
+    if (!query) return res.status(400).json({ error: "Query is required" });
 
     const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
+      model: "gemini-3.5-flash",
+      contents: query,
+      config: {
+        systemInstruction: "You are an AI research assistant providing real-time up-to-date web information with sources.",
+        tools: [{ googleSearch: {} }],
+      },
+    });
+
+    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+    const webSources = groundingChunks
+      .map((c: any) => c.web)
+      .filter(Boolean);
+
+    res.json({
+      text: response.text,
+      sources: webSources,
+    });
+  } catch (error: any) {
+    console.error("Search Grounding Error:", error);
+    res.status(500).json({ error: formatGeminiError(error, "Search Grounding failed"), details: error.message });
+  }
+});
+
+// ----------------------------------------------------
+// 3. Maps Grounding Endpoint (googleMaps tool with gemini-3.5-flash)
+// ----------------------------------------------------
+app.post("/api/ai/maps-grounding", async (req, res) => {
+  try {
+    const { query } = req.body;
+    if (!query) return res.status(400).json({ error: "Query is required" });
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.5-flash",
+      contents: query,
+      config: {
+        systemInstruction: "You are a campus and university location advisor providing geographical and location insights using Google Maps data.",
+        tools: [{ googleMaps: {} }],
+      },
+    });
+
+    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+
+    res.json({
+      text: response.text,
+      groundingChunks,
+    });
+  } catch (error: any) {
+    console.error("Maps Grounding Error:", error);
+    res.status(500).json({ error: formatGeminiError(error, "Maps Grounding failed"), details: error.message });
+  }
+});
+
+// ----------------------------------------------------
+// 4. Image-to-Video Animation (Veo Video Generation)
+// ----------------------------------------------------
+app.post("/api/ai/generate-video", async (req, res) => {
+  try {
+    const { prompt, imageBase64, imageMimeType, aspectRatio } = req.body;
+
+    if (!imageBase64) {
+      return res.status(400).json({ error: "An image is required to animate into video." });
+    }
+
+    const videoPrompt = prompt || "Animate this academic study illustration smoothly with fluid lighting and motion.";
+    const selectedAspectRatio = aspectRatio === "9:16" ? "9:16" : "16:9";
+
+    const operation = await ai.models.generateVideos({
+      model: "veo-3.1-fast-generate-preview",
+      prompt: videoPrompt,
+      image: {
+        imageBytes: imageBase64,
+        mimeType: imageMimeType || "image/png",
+      },
+      config: {
+        numberOfVideos: 1,
+        resolution: "720p",
+        aspectRatio: selectedAspectRatio,
+      },
+    });
+
+    res.json({ operationName: operation.name });
+  } catch (error: any) {
+    console.error("Veo Video Generation Error:", error);
+    res.status(500).json({ error: formatGeminiError(error, "Failed to initiate video generation."), details: error.message });
+  }
+});
+
+app.post("/api/ai/video-status", async (req, res) => {
+  try {
+    const { operationName } = req.body;
+    if (!operationName) return res.status(400).json({ error: "Operation name is required." });
+
+    const op = new GenerateVideosOperation();
+    op.name = operationName;
+    const updated = await ai.operations.getVideosOperation({ operation: op });
+
+    res.json({ done: updated.done, error: updated.error });
+  } catch (error: any) {
+    console.error("Video Status Error:", error);
+    res.status(500).json({ error: "Failed to check video status.", details: error.message });
+  }
+});
+
+app.post("/api/ai/video-download", async (req, res) => {
+  try {
+    const { operationName } = req.body;
+    if (!operationName) return res.status(400).json({ error: "Operation name is required." });
+
+    const op = new GenerateVideosOperation();
+    op.name = operationName;
+    const updated = await ai.operations.getVideosOperation({ operation: op });
+
+    const uri = updated.response?.generatedVideos?.[0]?.video?.uri;
+    if (!uri) {
+      return res.status(404).json({ error: "Generated video URI not found." });
+    }
+
+    const videoRes = await fetch(uri, {
+      headers: { "x-goog-api-key": process.env.GEMINI_API_KEY || "" },
+    });
+
+    if (!videoRes.ok) {
+      return res.status(500).json({ error: "Failed to download video from storage." });
+    }
+
+    res.setHeader("Content-Type", "video/mp4");
+    
+    // Stream response
+    const arrayBuffer = await videoRes.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    res.send(buffer);
+  } catch (error: any) {
+    console.error("Video Download Error:", error);
+    res.status(500).json({ error: "Video download failed.", details: error.message });
+  }
+});
+
+// ----------------------------------------------------
+// 5. Predictive GPA Insights Route
+// ----------------------------------------------------
+app.post("/api/ai/predict-gpa", async (req, res) => {
+  try {
+    const { currentGpa, targetGpa, courses, assignments, completedCredits } = req.body;
+
+    const prompt = `Current Cumulative GPA: ${currentGpa || 3.92}
+Target GPA: ${targetGpa || 4.00}
+Completed Credits: ${completedCredits || 78}
+Courses & Current Grades: ${JSON.stringify(courses)}
+Assignment History & Upcoming Work: ${JSON.stringify(assignments)}
+
+Act as an AI Academic Predictive Data Analyst. Perform a detailed forecast of the end-of-semester GPA outcomes:
+1. **Forecast Summary**: Predict the student's end-of-semester Term GPA and overall Cumulative GPA based on current trajectory and assignment submission quality.
+2. **Course Risk & Buffer Analysis**: Identify which specific courses need grade elevation to secure an A/A- and specify exact minimum target scores needed on pending assignments.
+3. **Strategic Milestones**: Provide 3 prioritized, high-leverage study actions based on assignment priorities and upcoming deadlines.`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.5-flash",
       contents: prompt,
       config: {
-        systemInstruction: "You are an AI Academic Counselor analyzing student grades.",
-        temperature: 0.5,
+        systemInstruction: "You are an expert AI Academic Analytics Advisor specializing in grade forecasting, workload optimization, and GPA trajectory modeling.",
+        temperature: 0.4,
       },
     });
 
     res.json({ insights: response.text });
   } catch (error: any) {
     console.error("GPA Prediction Error:", error);
-    res.status(500).json({ error: "Could not generate GPA insights." });
+    res.status(500).json({ error: formatGeminiError(error, "Could not generate GPA insights.") });
   }
 });
 
-// Vite middleware for dev / static serving for prod
+// Create HTTP server to attach WebSockets for Live API
 async function startServer() {
+  const httpServer = http.createServer(app);
+
+  // Attach Vite middleware in development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -116,9 +344,71 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[Aura Academics] Server listening on http://0.0.0.0:${PORT}`);
+  // Set up WebSocket Server for Live Voice API (gemini-3.1-flash-live-preview)
+  const wss = new WebSocketServer({ server: httpServer, path: "/live" });
+
+  wss.on("connection", async (clientWs) => {
+    console.log("[Live API] Client connected to Voice WebSocket.");
+
+    try {
+      const session = await ai.live.connect({
+        model: "gemini-3.1-flash-live-preview",
+        config: {
+          responseModalities: [Modality.AUDIO],
+          speechConfig: {
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: "Zephyr" } },
+          },
+          systemInstruction: "You are Aura Voice AI, an empathetic, encouraging, and highly intelligent academic tutor. Keep spoken answers concise, conversational, and direct.",
+        },
+        callbacks: {
+          onmessage: (message: any) => {
+            const audio = message.serverContent?.modelTurn?.parts?.[0]?.inlineData?.data;
+            if (audio) {
+              clientWs.send(JSON.stringify({ audio }));
+            }
+            if (message.serverContent?.interrupted) {
+              clientWs.send(JSON.stringify({ interrupted: true }));
+            }
+          },
+          onclose: () => {
+            console.log("[Live API] Gemini session closed.");
+          },
+          onerror: (err) => {
+            console.error("[Live API] Gemini session error:", err);
+          },
+        },
+      });
+
+      clientWs.on("message", (data) => {
+        try {
+          const parsed = JSON.parse(data.toString());
+          if (parsed.audio) {
+            session.sendRealtimeInput({
+              audio: { data: parsed.audio, mimeType: "audio/pcm;rate=16000" },
+            });
+          }
+        } catch (e) {
+          console.error("Error parsing client ws audio input:", e);
+        }
+      });
+
+      clientWs.on("close", () => {
+        try {
+          session.close();
+        } catch (e) {
+          // ignore
+        }
+      });
+    } catch (err) {
+      console.error("[Live API] Connection error:", err);
+      clientWs.send(JSON.stringify({ error: "Failed to initialize Gemini Live session." }));
+    }
+  });
+
+  httpServer.listen(PORT, "0.0.0.0", () => {
+    console.log(`[Aura Academics] Server running on http://0.0.0.0:${PORT}`);
   });
 }
 
 startServer();
+

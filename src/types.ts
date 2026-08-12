@@ -1,6 +1,9 @@
 export type ViewMode = "landing" | "dashboard";
 
 export type DashboardTab =
+  | "my-subjects"
+  | "book-library"
+  | "video-library"
   | "overview"
   | "courses"
   | "assignments"
@@ -9,7 +12,8 @@ export type DashboardTab =
   | "focus"
   | "learning-path"
   | "quiz"
-  | "school-finder";
+  | "school-finder"
+  | "video-animator";
 
 export interface QuizQuestion {
   id: string;

@@ -10,6 +10,9 @@ import {
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import { LandingPage } from "./components/LandingPage";
+import { MySubjectsTab } from "./components/MySubjectsTab";
+import { BookLibraryTab } from "./components/BookLibraryTab";
+import { VideoLibraryTab } from "./components/VideoLibraryTab";
 import { OverviewTab } from "./components/OverviewTab";
 import { CoursesTab } from "./components/CoursesTab";
 import { AssignmentsTab } from "./components/AssignmentsTab";
@@ -19,7 +22,9 @@ import { FocusTab } from "./components/FocusTab";
 import { LearningPathsTab } from "./components/LearningPathsTab";
 import { QuizTab } from "./components/QuizTab";
 import { SchoolFinderTab } from "./components/SchoolFinderTab";
+import { VideoAnimatorTab } from "./components/VideoAnimatorTab";
 import { AITutorModal } from "./components/AITutorModal";
+import { VoiceCompanionModal } from "./components/VoiceCompanionModal";
 import { TaskModal } from "./components/TaskModal";
 import { CourseModal } from "./components/CourseModal";
 import { NotificationDrawer } from "./components/NotificationDrawer";
@@ -27,9 +32,9 @@ import { NotificationDrawer } from "./components/NotificationDrawer";
 export default function App() {
   // Navigation & View States
   const [currentView, setCurrentView] = useState<ViewMode>("landing");
-  const [activeTab, setActiveTab] = useState<DashboardTab>("overview");
+  const [activeTab, setActiveTab] = useState<DashboardTab>("my-subjects");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // App Datasets State
   const [userProfile, setUserProfile] = useState(initialProfile);
@@ -40,6 +45,7 @@ export default function App() {
 
   // Modals & Drawers
   const [isAITutorOpen, setIsAITutorOpen] = useState(false);
+  const [isVoiceCompanionOpen, setIsVoiceCompanionOpen] = useState(false);
   const [aiTutorContext, setAiTutorContext] = useState<string | undefined>(undefined);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [selectedCourseForModal, setSelectedCourseForModal] = useState<Course | null>(null);
@@ -146,6 +152,10 @@ export default function App() {
               setActiveTab(tab);
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
+            onBack={() => {
+              setActiveTab("my-subjects");
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
             isCollapsed={isSidebarCollapsed}
             onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             user={userProfile}
@@ -159,6 +169,35 @@ export default function App() {
           {/* Dashboard Main Workspace Area */}
           <main className="flex-1 overflow-y-auto bg-transparent p-4 sm:p-6 lg:p-8 space-y-6 relative z-10">
             
+            {activeTab === "my-subjects" && (
+              <MySubjectsTab
+                onOpenBookLibrary={() => setActiveTab("book-library")}
+                onOpenVideoLibrary={() => setActiveTab("video-library")}
+                onOpenAITutor={(ctx) => {
+                  setAiTutorContext(ctx);
+                  setIsAITutorOpen(true);
+                }}
+              />
+            )}
+
+            {activeTab === "book-library" && (
+              <BookLibraryTab
+                onOpenAITutor={(ctx) => {
+                  setAiTutorContext(ctx);
+                  setIsAITutorOpen(true);
+                }}
+              />
+            )}
+
+            {activeTab === "video-library" && (
+              <VideoLibraryTab
+                onOpenAITutor={(ctx) => {
+                  setAiTutorContext(ctx);
+                  setIsAITutorOpen(true);
+                }}
+              />
+            )}
+
             {activeTab === "overview" && (
               <OverviewTab
                 user={userProfile}
@@ -180,6 +219,7 @@ export default function App() {
                 courses={courses}
                 onOpenCourseModal={(course) => setSelectedCourseForModal(course)}
                 onOpenAITutorWithContext={handleOpenAITutorWithContext}
+                onUpdateCourse={handleUpdateCourse}
               />
             )}
 
@@ -202,6 +242,7 @@ export default function App() {
               <AnalyticsTab
                 user={userProfile}
                 courses={courses}
+                assignments={assignments}
               />
             )}
 
@@ -209,6 +250,7 @@ export default function App() {
             {activeTab === "learning-path" && <LearningPathsTab />}
             {activeTab === "quiz" && <QuizTab courses={courses} />}
             {activeTab === "school-finder" && <SchoolFinderTab />}
+            {activeTab === "video-animator" && <VideoAnimatorTab />}
 
           </main>
         </div>
@@ -219,6 +261,11 @@ export default function App() {
         isOpen={isAITutorOpen}
         onClose={() => setIsAITutorOpen(false)}
         initialCourseContext={aiTutorContext}
+      />
+
+      <VoiceCompanionModal
+        isOpen={isVoiceCompanionOpen}
+        onClose={() => setIsVoiceCompanionOpen(false)}
       />
 
       <TaskModal

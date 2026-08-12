@@ -53,6 +53,34 @@ export const CourseModal: React.FC<CourseModalProps> = ({
     }
   };
 
+  const handleToggleModuleInModal = (moduleId: string) => {
+    let nowCompleted = false;
+    const updatedModules = course.modules.map((m) => {
+      if (m.id === moduleId) {
+        nowCompleted = !m.isCompleted;
+        return { ...m, isCompleted: nowCompleted };
+      }
+      return m;
+    });
+
+    const completedCount = updatedModules.filter((m) => m.isCompleted).length;
+    const totalCount = updatedModules.length;
+    const newProgress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+    const updatedCourse: Course = {
+      ...course,
+      modules: updatedModules,
+      progress: newProgress,
+      syllabusProgress: newProgress,
+    };
+
+    onUpdateCourse(updatedCourse);
+  };
+
+  const completedModulesCount = course.modules.filter((m) => m.isCompleted).length;
+  const totalModulesCount = course.modules.length;
+  const progressPct = totalModulesCount > 0 ? Math.round((completedModulesCount / totalModulesCount) * 100) : course.syllabusProgress;
+
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl max-w-lg w-full border border-white/50 dark:border-slate-800/50 shadow-2xl overflow-hidden p-6 space-y-4 max-h-[90vh] flex flex-col">
@@ -89,14 +117,19 @@ export const CourseModal: React.FC<CourseModalProps> = ({
             </p>
           </div>
 
-          <div>
-            <p className="font-bold text-slate-900 dark:text-white mb-1">
-              Syllabus Completion ({course.syllabusProgress}%)
-            </p>
-            <div className="w-full bg-slate-200/50 dark:bg-slate-800/50 rounded-full h-2 overflow-hidden">
+          <div className="p-3 bg-slate-100/70 dark:bg-slate-800/60 rounded-xl border border-slate-200/60 dark:border-slate-700/60 space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="font-extrabold text-slate-900 dark:text-white">
+                Course Progress
+              </p>
+              <span className="font-black text-indigo-600 dark:text-indigo-400 text-xs">
+                {progressPct}% ({completedModulesCount}/{totalModulesCount} Modules)
+              </span>
+            </div>
+            <div className="w-full bg-slate-200/80 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
               <div
-                className="bg-indigo-600 h-2 rounded-full"
-                style={{ width: `${course.syllabusProgress}%` }}
+                className="bg-gradient-to-r from-emerald-500 via-indigo-500 to-purple-500 h-2.5 rounded-full transition-all duration-300"
+                style={{ width: `${progressPct}%` }}
               />
             </div>
           </div>
@@ -108,21 +141,36 @@ export const CourseModal: React.FC<CourseModalProps> = ({
             </div>
           )}
 
-          <div className="space-y-1 pt-1">
-            <p className="font-bold text-slate-900 dark:text-white">Active Modules:</p>
-            <div className="space-y-1">
+          <div className="space-y-1.5 pt-1">
+            <p className="font-bold text-slate-900 dark:text-white">
+              Syllabus Modules (Click to toggle completion):
+            </p>
+            <div className="space-y-1.5">
               {course.modules.map((m) => (
-                <div key={m.id} className="flex items-center justify-between p-2 rounded-lg bg-white/40 dark:bg-slate-800/30 border border-white/30 dark:border-slate-700/30 text-[11px]">
-                  <span>{m.title}</span>
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => handleToggleModuleInModal(m.id)}
+                  className={`w-full flex items-center justify-between p-2.5 rounded-xl border text-left transition-all ${
+                    m.isCompleted
+                      ? "bg-emerald-50/60 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800 text-slate-800 dark:text-slate-200"
+                      : "bg-white/40 dark:bg-slate-800/30 border-white/40 dark:border-slate-700/30 hover:border-indigo-400 text-slate-700 dark:text-slate-300"
+                  }`}
+                >
+                  <span className={`text-[11px] font-bold ${m.isCompleted ? "line-through text-slate-500" : ""}`}>
+                    {m.title}
+                  </span>
                   {m.isCompleted ? (
-                    <span className="text-emerald-500 font-bold flex items-center space-x-1 shrink-0">
+                    <span className="text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center space-x-1 shrink-0 text-[10px] bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 rounded-md">
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Done</span>
+                      <span>Completed</span>
                     </span>
                   ) : (
-                    <span className="text-amber-500 font-bold shrink-0">Active</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-bold shrink-0 text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                      Click to Complete
+                    </span>
                   )}
-                </div>
+                </button>
               ))}
             </div>
           </div>

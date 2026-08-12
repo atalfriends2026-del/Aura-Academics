@@ -193,6 +193,38 @@ export const SchoolFinderTab: React.FC = () => {
   // Active view: "all" or "bookmarked"
   const [viewTab, setViewTab] = useState<"all" | "bookmarked">("all");
 
+  // Live Grounding AI Search state
+  const [groundingQuery, setGroundingQuery] = useState("");
+  const [groundingMode, setGroundingMode] = useState<"search" | "maps">("maps");
+  const [groundingResult, setGroundingResult] = useState<string | null>(null);
+  const [groundingSources, setGroundingSources] = useState<any[]>([]);
+  const [groundingLoading, setGroundingLoading] = useState(false);
+
+  const handleGroundingSearch = async () => {
+    if (!groundingQuery.trim()) return;
+    setGroundingLoading(true);
+    setGroundingResult(null);
+    setGroundingSources([]);
+
+    try {
+      const endpoint = groundingMode === "maps" ? "/api/ai/maps-grounding" : "/api/ai/search-grounding";
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: groundingQuery }),
+      });
+
+      const data = await res.json();
+      setGroundingResult(data.text || "No results found.");
+      if (data.sources) setGroundingSources(data.sources);
+      if (data.groundingChunks) setGroundingSources(data.groundingChunks);
+    } catch (err) {
+      setGroundingResult("Error retrieving grounded information.");
+    } finally {
+      setGroundingLoading(false);
+    }
+  };
+
   // Toggle bookmark
   const toggleBookmark = (id: string) => {
     setBookmarkedIds(prev => 
@@ -404,6 +436,117 @@ export const SchoolFinderTab: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Google Maps & Search Grounding Explorer */}
+      <div className="p-5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-amber-500/20 dark:border-amber-500/10 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center space-x-2">
+            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <MapPin className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center space-x-2">
+                <span>Google Maps & Search Live Grounding</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30">
+                  gemini-3.5-flash
+                </span>
+              </h3>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                Explore real-time campus locations, nearby study cafes, housing costs, or live university admissions news.
+              </p>
+            </div>
+          </div>
+
+          {/* Mode Switcher */}
+          <div className="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold self-start sm:self-auto">
+            <button
+              onClick={() => setGroundingMode("maps")}
+              className={`px-3 py-1 rounded-lg transition-all flex items-center space-x-1 ${
+                groundingMode === "maps"
+                  ? "bg-amber-500 text-white shadow-sm"
+                  : "text-slate-600 dark:text-slate-400"
+              }`}
+            >
+              <MapPin className="w-3.5 h-3.5" />
+              <span>Maps Grounding</span>
+            </button>
+            <button
+              onClick={() => setGroundingMode("search")}
+              className={`px-3 py-1 rounded-lg transition-all flex items-center space-x-1 ${
+                groundingMode === "search"
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "text-slate-600 dark:text-slate-400"
+              }`}
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span>Web Search</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Query Bar */}
+        <div className="flex items-center space-x-2">
+          <input
+            type="text"
+            value={groundingQuery}
+            onChange={(e) => setGroundingQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleGroundingSearch()}
+            placeholder={
+              groundingMode === "maps"
+                ? "e.g. Find top quiet libraries and coffee shops near Stanford campus..."
+                : "e.g. UC Berkeley Computer Science 2026 acceptance rate changes..."
+            }
+            className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-amber-500"
+          />
+          <button
+            onClick={handleGroundingSearch}
+            disabled={groundingLoading}
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-indigo-600 text-white text-xs font-bold shadow-md hover:opacity-95 disabled:opacity-50 transition-all flex items-center space-x-1.5 shrink-0"
+          >
+            {groundingLoading ? (
+              <Zap className="w-4 h-4 animate-spin" />
+            ) : (
+              <Search className="w-4 h-4" />
+            )}
+            <span>{groundingLoading ? "Querying Grounded AI..." : "Explore"}</span>
+          </button>
+        </div>
+
+        {/* Results display */}
+        {groundingResult && (
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 space-y-3 animate-fadeIn">
+            <div className="whitespace-pre-wrap leading-relaxed">
+              {groundingResult}
+            </div>
+
+            {groundingSources && groundingSources.length > 0 && (
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
+                <span className="text-[10px] font-black uppercase text-amber-600 dark:text-amber-400 block mb-1">
+                  Verified Grounding Sources:
+                </span>
+                <div className="flex flex-wrap gap-2 text-[10px]">
+                  {groundingSources.map((s: any, idx: number) => {
+                    const title = s.title || s.uri || (s.web?.title) || `Source ${idx + 1}`;
+                    const url = s.uri || s.web?.uri || "#";
+                    return (
+                      <a
+                        key={idx}
+                        href={url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-2 py-1 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-indigo-600 dark:text-indigo-400 hover:underline flex items-center space-x-1"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        <span className="max-w-[200px] truncate">{title}</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Main Grid: Filters Sidebar + School Cards */}

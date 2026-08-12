@@ -11,6 +11,11 @@ import {
   HelpCircle,
   FileText,
   Calendar,
+  BrainCircuit,
+  Image as ImageIcon,
+  Zap,
+  Globe,
+  Trash2,
 } from "lucide-react";
 
 interface AITutorModalProps {
@@ -30,14 +35,17 @@ export const AITutorModal: React.FC<AITutorModalProps> = ({
       sender: "ai",
       text: initialCourseContext
         ? `Hello! I am Aura AI Tutor. I see you are studying **${initialCourseContext}**. How can I assist you with this subject today?`
-        : "Hello Elena! I am Aura AI Tutor, your intelligent study companion. Ask me any coursework question, request practice quiz questions, or ask for a study schedule!",
+        : "Hello Elena! I am Aura AI Tutor, your multi-model study companion. Ask me any coursework question, upload a homework picture, enable High Thinking for complex proofs, or search real-time web info!",
       timestamp: "Just now",
     },
   ]);
   const [inputPrompt, setInputPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [mode, setMode] = useState<"general" | "quiz" | "summary" | "plan" | "feedback">("general");
+  const [mode, setMode] = useState<"general" | "quiz" | "summary" | "plan" | "feedback" | "fast" | "search">("general");
+  const [enableThinking, setEnableThinking] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
@@ -47,36 +55,71 @@ export const AITutorModal: React.FC<AITutorModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSendMessage = async (textToSend?: string, selectedMode?: "general" | "quiz" | "summary" | "plan" | "feedback") => {
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSendMessage = async (textToSend?: string, selectedMode?: "general" | "quiz" | "summary" | "plan" | "feedback" | "fast" | "search") => {
     const promptText = textToSend || inputPrompt;
-    if (!promptText.trim()) return;
+    if (!promptText.trim() && !imagePreview) return;
 
     const currentMode = selectedMode || mode;
 
     const userMsg: ChatMessage = {
       id: "usr-" + Date.now(),
       sender: "user",
-      text: promptText,
+      text: promptText + (imagePreview ? " [Uploaded Image Attached]" : ""),
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
     if (!textToSend) setInputPrompt("");
+    const attachedImage = imagePreview;
+    setImagePreview(null);
     setLoading(true);
 
     try {
-      const res = await fetch("/api/ai/tutor", {
+      let apiEndpoint = "/api/ai/tutor";
+      let requestBody: any = {
+        prompt: promptText,
+        courseContext: initialCourseContext,
+        mode: currentMode,
+        enableThinking,
+        history: messages.map((m) => ({ role: m.sender, text: m.text })),
+      };
+
+      if (attachedImage) {
+        requestBody.imageBase64 = attachedImage.split(",")[1];
+        requestBody.imageMimeType = attachedImage.split(";")[0].replace("data:", "");
+      }
+
+      if (currentMode === "search") {
+        apiEndpoint = "/api/ai/search-grounding";
+        requestBody = { query: promptText };
+      }
+
+      const res = await fetch(apiEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: promptText,
-          courseContext: initialCourseContext,
-          mode: currentMode,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await res.json();
-      const aiResponseText = data.text || "I'm having trouble fetching a response. Please try asking again.";
+      let aiResponseText = data.text || "I'm having trouble fetching a response. Please try asking again.";
+
+      if (data.sources && data.sources.length > 0) {
+        const sourcesList = data.sources
+          .map((s: any) => `- [${s.title || s.uri}](${s.uri})`)
+          .join("\n");
+        aiResponseText += `\n\n**Sources & Web Grounding:**\n${sourcesList}`;
+      }
 
       const aiMsg: ChatMessage = {
         id: "ai-" + Date.now(),
@@ -92,7 +135,7 @@ export const AITutorModal: React.FC<AITutorModalProps> = ({
         {
           id: "err-" + Date.now(),
           sender: "ai",
-          text: "Sorry, I ran into a connection error. Please make sure your server is running.",
+          text: "Sorry, I ran into a connection error. Please try again.",
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ]);
@@ -120,24 +163,40 @@ export const AITutorModal: React.FC<AITutorModalProps> = ({
             <div>
               <h3 className="font-extrabold text-sm">Aura AI Tutor</h3>
               <p className="text-[10px] text-indigo-200">
-                {initialCourseContext ? `Context: ${initialCourseContext}` : "Syllabus AI Companion"}
+                {initialCourseContext ? `Context: ${initialCourseContext}` : "Multi-Model Syllabus Companion"}
               </p>
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-indigo-200 hover:text-white hover:bg-white/10 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center space-x-2">
+            {/* High Thinking Toggle */}
+            <button
+              onClick={() => setEnableThinking(!enableThinking)}
+              className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase flex items-center space-x-1 transition-all ${
+                enableThinking
+                  ? "bg-amber-400 text-amber-950 shadow-md animate-pulse"
+                  : "bg-white/10 text-indigo-200 hover:bg-white/20"
+              }`}
+              title="High Thinking Mode using gemini-3.1-pro-preview (ThinkingLevel.HIGH)"
+            >
+              <BrainCircuit className="w-3.5 h-3.5" />
+              <span>{enableThinking ? "High Thinking ON" : "Thinking Mode"}</span>
+            </button>
+
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-indigo-200 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Mode Selector */}
-        <div className="p-2 border-b border-white/50 dark:border-slate-800/50 bg-slate-50 dark:bg-slate-900/80 flex items-center justify-around text-xs font-semibold">
+        <div className="p-2 border-b border-white/50 dark:border-slate-800/50 bg-slate-50 dark:bg-slate-900/80 flex items-center justify-around text-xs font-semibold overflow-x-auto">
           <button
             onClick={() => setMode("general")}
-            className={`px-3 py-1 rounded-lg flex items-center space-x-1 ${
+            className={`px-2.5 py-1 rounded-lg flex items-center space-x-1 shrink-0 ${
               mode === "general"
                 ? "bg-indigo-600 text-white shadow-sm"
                 : "text-slate-600 dark:text-slate-400"
@@ -148,20 +207,46 @@ export const AITutorModal: React.FC<AITutorModalProps> = ({
           </button>
 
           <button
+            onClick={() => setMode("search")}
+            className={`px-2.5 py-1 rounded-lg flex items-center space-x-1 shrink-0 ${
+              mode === "search"
+                ? "bg-emerald-600 text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-400"
+            }`}
+            title="Google Search Grounding (gemini-3.5-flash)"
+          >
+            <Globe className="w-3.5 h-3.5" />
+            <span>Search</span>
+          </button>
+
+          <button
+            onClick={() => setMode("fast")}
+            className={`px-2.5 py-1 rounded-lg flex items-center space-x-1 shrink-0 ${
+              mode === "fast"
+                ? "bg-amber-600 text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-400"
+            }`}
+            title="Fast Mode (gemini-3.1-flash-lite)"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            <span>Fast</span>
+          </button>
+
+          <button
             onClick={() => setMode("quiz")}
-            className={`px-3 py-1 rounded-lg flex items-center space-x-1 ${
+            className={`px-2.5 py-1 rounded-lg flex items-center space-x-1 shrink-0 ${
               mode === "quiz"
                 ? "bg-indigo-600 text-white shadow-sm"
                 : "text-slate-600 dark:text-slate-400"
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Practice Quiz</span>
+            <span>Quiz</span>
           </button>
 
           <button
             onClick={() => setMode("summary")}
-            className={`px-3 py-1 rounded-lg flex items-center space-x-1 ${
+            className={`px-2.5 py-1 rounded-lg flex items-center space-x-1 shrink-0 ${
               mode === "summary"
                 ? "bg-indigo-600 text-white shadow-sm"
                 : "text-slate-600 dark:text-slate-400"
@@ -173,26 +258,14 @@ export const AITutorModal: React.FC<AITutorModalProps> = ({
 
           <button
             onClick={() => setMode("plan")}
-            className={`px-3 py-1 rounded-lg flex items-center space-x-1 ${
+            className={`px-2.5 py-1 rounded-lg flex items-center space-x-1 shrink-0 ${
               mode === "plan"
                 ? "bg-indigo-600 text-white shadow-sm"
                 : "text-slate-600 dark:text-slate-400"
             }`}
           >
             <Calendar className="w-3.5 h-3.5" />
-            <span>Study Plan</span>
-          </button>
-
-          <button
-            onClick={() => setMode("feedback")}
-            className={`px-3 py-1 rounded-lg flex items-center space-x-1 ${
-              mode === "feedback"
-                ? "bg-indigo-600 text-white shadow-sm"
-                : "text-slate-600 dark:text-slate-400"
-            }`}
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span>Feedback</span>
+            <span>Plan</span>
           </button>
         </div>
 
@@ -249,45 +322,83 @@ export const AITutorModal: React.FC<AITutorModalProps> = ({
           {loading && (
             <div className="flex items-center space-x-2 text-xs text-indigo-500 font-semibold p-2">
               <Sparkles className="w-4 h-4 animate-spin" />
-              <span>Aura AI is generating response...</span>
+              <span>
+                {enableThinking
+                  ? "Gemini 3.1 Pro (High Thinking) is solving step-by-step..."
+                  : "Aura AI is generating response..."}
+              </span>
             </div>
           )}
 
           <div ref={chatBottomRef} />
         </div>
 
+        {/* Image Attachment Preview Badge */}
+        {imagePreview && (
+          <div className="px-4 py-2 bg-indigo-50 dark:bg-indigo-950/80 border-t border-indigo-100 dark:border-indigo-900 flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <img
+                src={imagePreview}
+                alt="Upload preview"
+                className="w-8 h-8 rounded-md object-cover border border-indigo-200"
+              />
+              <span className="text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">
+                Photo attached for Multimodal Analysis
+              </span>
+            </div>
+            <button
+              onClick={() => setImagePreview(null)}
+              className="p-1 text-slate-400 hover:text-rose-500"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {/* Preset Prompt Chips */}
         <div className="p-2 px-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex items-center space-x-2 overflow-x-auto text-[11px]">
           <span className="text-slate-400 font-bold shrink-0">Try:</span>
           <button
-            onClick={() => handleSendMessage("Generate a 3-question practice quiz on Red-Black Trees", "quiz")}
-            className="px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-indigo-100 text-slate-700 dark:text-slate-300 shrink-0"
+            onClick={() => {
+              setEnableThinking(true);
+              handleSendMessage("Solve step-by-step: Prove that the halting problem is undecidable", "general");
+            }}
+            className="px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-semibold shrink-0"
           >
-            Quiz: Red-Black Trees
+            🧠 High Thinking: Prove Halting Problem
           </button>
           <button
-            onClick={() => handleSendMessage("Explain Singular Value Decomposition (SVD) simply", "general")}
-            className="px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-indigo-100 text-slate-700 dark:text-slate-300 shrink-0"
+            onClick={() => handleSendMessage("What are the latest breakthroughs in quantum computing in 2026?", "search")}
+            className="px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-semibold shrink-0"
           >
-            Explain SVD Simply
+            🌐 Web Search Grounding
           </button>
           <button
-            onClick={() => handleSendMessage("Create a 3-day study schedule for Physics Midterm", "plan")}
-            className="px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-indigo-100 text-slate-700 dark:text-slate-300 shrink-0"
+            onClick={() => handleSendMessage("Give me a quick 1-sentence tip for active recall study technique", "fast")}
+            className="px-2.5 py-1 rounded-full bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 font-semibold shrink-0"
           >
-            Physics Study Plan
-          </button>
-          <button
-            onClick={() => handleSendMessage("Can you review this paragraph and give me feedback on its clarity and structure?", "feedback")}
-            className="px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-indigo-100 text-slate-700 dark:text-slate-300 shrink-0"
-          >
-            Review Paragraph
+            ⚡ Fast Tip: Active Recall
           </button>
         </div>
 
         {/* Input Bar */}
         <div className="p-4 border-t border-white/50 dark:border-slate-800/50 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl">
           <div className="flex items-center space-x-2">
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              onChange={handleImageSelect}
+              className="hidden"
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-colors"
+              title="Upload Photo for Image Analysis (gemini-3.1-pro-preview)"
+            >
+              <ImageIcon className="w-4 h-4" />
+            </button>
+
             <textarea
               value={inputPrompt}
               onChange={(e) => {
@@ -302,10 +413,17 @@ export const AITutorModal: React.FC<AITutorModalProps> = ({
                   e.currentTarget.style.height = 'auto';
                 }
               }}
-              placeholder="Ask Aura AI or paste your work for feedback..."
+              placeholder={
+                enableThinking
+                  ? "High Thinking ON: Ask complex proofs, math or logic..."
+                  : mode === "search"
+                  ? "Search Web: Ask for current news, paper citations..."
+                  : "Ask Aura AI or paste homework..."
+              }
               rows={1}
               className="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 resize-none overflow-y-auto min-h-[40px]"
             />
+
             <button
               onClick={() => handleSendMessage()}
               disabled={loading}
@@ -320,3 +438,4 @@ export const AITutorModal: React.FC<AITutorModalProps> = ({
     </div>
   );
 };
+
