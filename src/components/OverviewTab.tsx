@@ -1,5 +1,6 @@
 import React from "react";
-import { UserProfile, Course, Assignment } from "../types";
+import { UserProfile, Course, Assignment, AchievementBadge } from "../types";
+import { BadgeSummaryWidget } from "./BadgeSummaryWidget";
 import {
   Award,
   BookOpen,
@@ -35,6 +36,8 @@ interface OverviewTabProps {
   onOpenAITutor: () => void;
   onOpenCourseModal: (course: Course) => void;
   onSwitchTab: (tab: any) => void;
+  badges?: AchievementBadge[];
+  onOpenBadgeGallery?: () => void;
 }
 
 export const OverviewTab: React.FC<OverviewTabProps> = ({
@@ -46,6 +49,8 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   onOpenAITutor,
   onOpenCourseModal,
   onSwitchTab,
+  badges = [],
+  onOpenBadgeGallery = () => {},
 }) => {
   const pendingTasks = assignments.filter((a) => a.status === "Pending");
 
@@ -98,6 +103,14 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
         {/* Decorative Glow */}
         <div className="absolute -right-10 -bottom-10 w-60 h-60 bg-indigo-500/20 rounded-full blur-2xl pointer-events-none" />
       </div>
+
+      {/* Digital Achievements & Badges Summary */}
+      {badges && badges.length > 0 && (
+        <BadgeSummaryWidget
+          badges={badges}
+          onOpenBadgeGallery={onOpenBadgeGallery}
+        />
+      )}
 
       {/* Metric Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

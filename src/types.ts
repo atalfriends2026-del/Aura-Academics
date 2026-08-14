@@ -8,6 +8,7 @@ export type DashboardTab =
   | "courses"
   | "assignments"
   | "schedule"
+  | "classroom"
   | "analytics"
   | "focus"
   | "learning-path"
@@ -143,3 +144,51 @@ export interface NotificationItem {
   type: "grade" | "announcement" | "deadline" | "system";
   unread: boolean;
 }
+
+export interface AttendanceRecord {
+  id: string;
+  subjectTitle: string;
+  subjectCode: string;
+  date: string; // YYYY-MM-DD
+  time: string; // e.g., 09:30 AM
+  status: "Present" | "Absent" | "Excused" | "Late";
+  location: string;
+  syncedToGoogleCalendar?: boolean;
+  googleCalendarEventId?: string;
+  notes?: string;
+}
+
+export interface AchievementBadge {
+  id: string;
+  title: string;
+  description: string;
+  category: "Milestone" | "Course Completion" | "Module Streak" | "Mastery";
+  tier: "Bronze" | "Silver" | "Gold" | "Platinum" | "Diamond";
+  icon: string;
+  unlocked: boolean;
+  unlockedAt?: string;
+  currentValue: number;
+  targetValue: number;
+  progressPercentage: number;
+  gradient: string;
+  borderAccent: string;
+  bgLight: string;
+  textColor: string;
+  xpPoints: number;
+}
+
+export interface UploadedSubjectPDF {
+  id: string;
+  subjectId: string;
+  subjectName: string;
+  fileName: string;
+  fileSize: string;
+  uploadDate: string;
+  fileDataUrl?: string;
+  pageCount?: number;
+  category?: "Homework" | "Notes" | "Question Paper" | "Textbook" | "Reference";
+  description?: string;
+  previewText?: string;
+}
+
+

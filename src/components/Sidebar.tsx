@@ -113,6 +113,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
       action: () => onSelectTab("schedule"),
     },
     {
+      id: "classroom",
+      label: "Google Classroom",
+      icon: School,
+      color: "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 border-teal-200 dark:border-teal-800",
+      action: () => onSelectTab("classroom"),
+      badge: "Connected",
+      badgeBg: "bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300",
+    },
+    {
       id: "analytics",
       label: "Analytics",
       icon: BarChart3,

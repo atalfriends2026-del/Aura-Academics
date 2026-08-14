@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { ViewMode, DashboardTab, Course, Assignment, ScheduleEvent, NotificationItem } from "./types";
+import { ViewMode, DashboardTab, Course, Assignment, ScheduleEvent, NotificationItem, AchievementBadge, AttendanceRecord } from "./types";
 import {
   initialProfile,
   initialCourses,
   initialAssignments,
   initialScheduleEvents,
   initialNotifications,
+  initialAttendanceRecords,
 } from "./data/initialData";
+import { INITIAL_BADGES, evaluateBadges } from "./data/badgeData";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import { LandingPage } from "./components/LandingPage";
@@ -17,6 +19,7 @@ import { OverviewTab } from "./components/OverviewTab";
 import { CoursesTab } from "./components/CoursesTab";
 import { AssignmentsTab } from "./components/AssignmentsTab";
 import { ScheduleTab } from "./components/ScheduleTab";
+import { GoogleClassroomTab } from "./components/GoogleClassroomTab";
 import { AnalyticsTab } from "./components/AnalyticsTab";
 import { FocusTab } from "./components/FocusTab";
 import { LearningPathsTab } from "./components/LearningPathsTab";
@@ -28,6 +31,8 @@ import { VoiceCompanionModal } from "./components/VoiceCompanionModal";
 import { TaskModal } from "./components/TaskModal";
 import { CourseModal } from "./components/CourseModal";
 import { NotificationDrawer } from "./components/NotificationDrawer";
+import { BadgeGalleryModal } from "./components/BadgeGalleryModal";
+import { NewBadgeUnlockedModal } from "./components/NewBadgeUnlockedModal";
 
 export default function App() {
   // Navigation & View States
@@ -41,7 +46,9 @@ export default function App() {
   const [courses, setCourses] = useState<Course[]>(initialCourses);
   const [assignments, setAssignments] = useState<Assignment[]>(initialAssignments);
   const [scheduleEvents, setScheduleEvents] = useState<ScheduleEvent[]>(initialScheduleEvents);
+  const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>(initialAttendanceRecords);
   const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
+  const [badges, setBadges] = useState<AchievementBadge[]>(INITIAL_BADGES);
 
   // Modals & Drawers
   const [isAITutorOpen, setIsAITutorOpen] = useState(false);
@@ -50,7 +57,31 @@ export default function App() {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [selectedCourseForModal, setSelectedCourseForModal] = useState<Course | null>(null);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isBadgeGalleryOpen, setIsBadgeGalleryOpen] = useState(false);
+  const [newlyUnlockedBadge, setNewlyUnlockedBadge] = useState<AchievementBadge | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Evaluate digital badges on course progress changes
+  useEffect(() => {
+    const { updatedBadges, newlyUnlockedBadges } = evaluateBadges(courses, badges);
+    setBadges(updatedBadges);
+
+    if (newlyUnlockedBadges.length > 0) {
+      const firstUnlocked = newlyUnlockedBadges[0];
+      setNewlyUnlockedBadge(firstUnlocked);
+
+      // Post notification alert
+      const newNotif: NotificationItem = {
+        id: "notif-badge-" + Date.now(),
+        title: `🎉 Badge Unlocked: ${firstUnlocked.title}`,
+        message: `You earned the "${firstUnlocked.title}" digital achievement badge! +${firstUnlocked.xpPoints} XP`,
+        timestamp: "Just now",
+        type: "announcement",
+        unread: true,
+      };
+      setNotifications((prev) => [newNotif, ...prev]);
+    }
+  }, [courses]);
 
   // Dark mode side effect
   useEffect(() => {
@@ -87,6 +118,10 @@ export default function App() {
 
   const handleAddScheduleEvent = (newEvent: ScheduleEvent) => {
     setScheduleEvents((prev) => [...prev, newEvent]);
+  };
+
+  const handleAddAttendanceRecord = (newRecord: AttendanceRecord) => {
+    setAttendanceRecords((prev) => [newRecord, ...prev]);
   };
 
   const handleOpenAITutorWithContext = (courseTitle: string) => {
@@ -132,6 +167,8 @@ export default function App() {
         }}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        unlockedBadgesCount={badges.filter((b) => b.unlocked).length}
+        onOpenBadgeGallery={() => setIsBadgeGalleryOpen(true)}
       />
 
       {/* Main Body View Switching */}
@@ -211,6 +248,8 @@ export default function App() {
                 }}
                 onOpenCourseModal={(course) => setSelectedCourseForModal(course)}
                 onSwitchTab={setActiveTab}
+                badges={badges}
+                onOpenBadgeGallery={() => setIsBadgeGalleryOpen(true)}
               />
             )}
 
@@ -220,6 +259,8 @@ export default function App() {
                 onOpenCourseModal={(course) => setSelectedCourseForModal(course)}
                 onOpenAITutorWithContext={handleOpenAITutorWithContext}
                 onUpdateCourse={handleUpdateCourse}
+                badges={badges}
+                onOpenBadgeGallery={() => setIsBadgeGalleryOpen(true)}
               />
             )}
 
@@ -235,6 +276,14 @@ export default function App() {
               <ScheduleTab
                 events={scheduleEvents}
                 onAddEvent={handleAddScheduleEvent}
+                attendanceRecords={attendanceRecords}
+                onAddAttendanceRecord={handleAddAttendanceRecord}
+              />
+            )}
+
+            {activeTab === "classroom" && (
+              <GoogleClassroomTab
+                onImportAssignment={handleSaveNewTask}
               />
             )}
 
@@ -286,6 +335,20 @@ export default function App() {
         onClose={() => setIsNotificationsOpen(false)}
         notifications={notifications}
         onMarkAllRead={handleMarkAllNotificationsRead}
+      />
+
+      {/* Digital Badges Showcase Modal */}
+      {isBadgeGalleryOpen && (
+        <BadgeGalleryModal
+          badges={badges}
+          onClose={() => setIsBadgeGalleryOpen(false)}
+        />
+      )}
+
+      {/* New Badge Unlocked Celebration Modal */}
+      <NewBadgeUnlockedModal
+        badge={newlyUnlockedBadge}
+        onClose={() => setNewlyUnlockedBadge(null)}
       />
 
     </div>

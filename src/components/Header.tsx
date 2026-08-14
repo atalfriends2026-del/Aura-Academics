@@ -10,6 +10,7 @@ import {
   Search,
   Sparkles,
   ArrowRight,
+  Trophy,
 } from "lucide-react";
 
 interface HeaderProps {
@@ -23,6 +24,8 @@ interface HeaderProps {
   onOpenAITutor: () => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
+  unlockedBadgesCount?: number;
+  onOpenBadgeGallery?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -36,6 +39,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAITutor,
   searchQuery,
   onSearchChange,
+  unlockedBadgesCount = 0,
+  onOpenBadgeGallery,
 }) => {
   const unreadCount = notifications.filter((n) => n.unread).length;
 
@@ -141,7 +146,19 @@ export const Header: React.FC<HeaderProps> = ({
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             ) : (
-              <div className="flex items-center space-x-3 pl-2 border-l border-slate-200 dark:border-slate-800">
+              <div className="flex items-center space-x-2 sm:space-x-3 pl-2 border-l border-slate-200 dark:border-slate-800">
+                {/* Badges Button */}
+                {onOpenBadgeGallery && (
+                  <button
+                    onClick={onOpenBadgeGallery}
+                    className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-all text-xs font-black shadow-2xs"
+                    title="View Digital Achievements & Badges"
+                  >
+                    <Trophy className="w-4 h-4 text-amber-500 fill-amber-500" />
+                    <span className="hidden sm:inline-block">{unlockedBadgesCount} Badges</span>
+                  </button>
+                )}
+
                 {/* Notification Bell */}
                 <button
                   onClick={onOpenNotifications}

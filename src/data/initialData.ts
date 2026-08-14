@@ -261,3 +261,57 @@ export const initialNotifications: NotificationItem[] = [
     unread: false,
   },
 ];
+
+export const initialAttendanceRecords = [
+  {
+    id: "att-1",
+    subjectTitle: "Computer Science - Data Structures",
+    subjectCode: "CS 401",
+    date: "2026-08-11",
+    time: "10:00 AM",
+    status: "Present" as const,
+    location: "Science Hall 304",
+    notes: "Attended Graph Algorithms lecture & submitted attendance QR code.",
+  },
+  {
+    id: "att-2",
+    subjectTitle: "Mathematics - Linear Algebra",
+    subjectCode: "MATH 302",
+    date: "2026-08-11",
+    time: "01:30 PM",
+    status: "Present" as const,
+    location: "Math Annex 102",
+    notes: "Matrix Transformation problem solving session.",
+  },
+  {
+    id: "att-3",
+    subjectTitle: "Physics - Electromagnetism",
+    subjectCode: "PHYS 201",
+    date: "2026-08-10",
+    time: "02:00 PM",
+    status: "Late" as const,
+    location: "Physics Aud 1",
+    notes: "Arrived 5 mins late due to lab setup delay.",
+  },
+  {
+    id: "att-4",
+    subjectTitle: "Kannada Language & Literature",
+    subjectCode: "KAN 101",
+    date: "2026-08-10",
+    time: "09:00 AM",
+    status: "Present" as const,
+    location: "Humanities Hall 12",
+    notes: "Basavanna Vachana Sahitya recitation.",
+  },
+  {
+    id: "att-5",
+    subjectTitle: "English Literature",
+    subjectCode: "ENG 105",
+    date: "2026-08-09",
+    time: "11:00 AM",
+    status: "Present" as const,
+    location: "Humanities Hall 08",
+    notes: "Critical essay peer discussion.",
+  },
+];
+

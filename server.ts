@@ -325,6 +325,84 @@ Act as an AI Academic Predictive Data Analyst. Perform a detailed forecast of th
   }
 });
 
+// ----------------------------------------------------
+// 6. PDF AI Summarizer Endpoint (Summaries, Terminology, Quiz Questions)
+// ----------------------------------------------------
+app.post("/api/ai/summarize-pdf", async (req, res) => {
+  try {
+    const { bookTitle, board, subject, grade, moduleTitle, moduleSummary, splitPages } = req.body;
+
+    const pageContents = Array.isArray(splitPages)
+      ? splitPages.map((p: any) => `[Page ${p.pageNumber} - ${p.title}]: ${p.excerpt}`).join("\n\n")
+      : "";
+
+    const prompt = `Analyze the following PDF textbook lesson module content and generate a comprehensive study breakdown:
+
+Book Title: ${bookTitle || "Textbook"}
+Syllabus / Board: ${board || "General Board"}
+Grade Standard: ${grade || "Standard"}
+Subject: ${subject || "General Subject"}
+Lesson Module Title: ${moduleTitle || "Lesson Module"}
+Module Executive Summary: ${moduleSummary || ""}
+
+Excerpts from PDF Split Pages:
+${pageContents}
+
+Provide your response strictly as a JSON object adhering to this structure:
+{
+  "executiveSummary": [
+    "4-5 concise, high-yield bullet point summaries capturing key concepts, mechanisms, and learning objectives"
+  ],
+  "keyTerms": [
+    {
+      "term": "Key Term Name",
+      "definition": "Clear, precise academic definition according to syllabus standards",
+      "example": "Contextual or practical textbook example"
+    }
+  ],
+  "quizQuestions": [
+    {
+      "id": "q1",
+      "question": "Thoughtful practice question testing understanding of the PDF content?",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "answerIndex": 0,
+      "explanation": "Step-by-step reasoning explaining why Option A is correct based on the PDF content."
+    }
+  ]
+}`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.5-flash",
+      contents: prompt,
+      config: {
+        systemInstruction: "You are an expert textbook curriculum analyst and AI study assistant. Produce detailed, high-yield, error-free study guides with concise summaries, key terminology, and practice questions based on textbook PDF content.",
+        responseMimeType: "application/json",
+        temperature: 0.3,
+      },
+    });
+
+    let resultJson: any = {};
+    try {
+      resultJson = JSON.parse(response.text || "{}");
+    } catch (e) {
+      console.error("Failed to parse Gemini JSON output:", response.text);
+      resultJson = {
+        executiveSummary: [response.text || "Summary generated."],
+        keyTerms: [],
+        quizQuestions: [],
+      };
+    }
+
+    res.json(resultJson);
+  } catch (error: any) {
+    console.error("PDF Summarize API Error:", error);
+    res.status(500).json({
+      error: formatGeminiError(error, "Failed to generate AI PDF summary."),
+      details: error.message || String(error),
+    });
+  }
+});
+
 // Create HTTP server to attach WebSockets for Live API
 async function startServer() {
   const httpServer = http.createServer(app);

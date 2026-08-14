@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Course } from "../types";
+import { Course, AchievementBadge } from "../types";
+import { BadgeSummaryWidget } from "./BadgeSummaryWidget";
 import {
   BookOpen,
   User,
@@ -24,6 +25,8 @@ interface CoursesTabProps {
   onOpenCourseModal: (course: Course) => void;
   onOpenAITutorWithContext: (courseTitle: string) => void;
   onUpdateCourse: (course: Course) => void;
+  badges?: AchievementBadge[];
+  onOpenBadgeGallery?: () => void;
 }
 
 export const CoursesTab: React.FC<CoursesTabProps> = ({
@@ -31,6 +34,8 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({
   onOpenCourseModal,
   onOpenAITutorWithContext,
   onUpdateCourse,
+  badges = [],
+  onOpenBadgeGallery = () => {},
 }) => {
   const [selectedCourseId, setSelectedCourseId] = useState<string>(courses[0]?.id || "");
   const [moduleFilter, setModuleFilter] = useState<"all" | "completed" | "in-progress">("all");
@@ -110,6 +115,14 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({
           </button>
         )}
       </div>
+
+      {/* Digital Achievements & Badges Widget */}
+      {badges && badges.length > 0 && (
+        <BadgeSummaryWidget
+          badges={badges}
+          onOpenBadgeGallery={onOpenBadgeGallery}
+        />
+      )}
 
       {/* Main Layout: Course Selector Sidebar + Module Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
