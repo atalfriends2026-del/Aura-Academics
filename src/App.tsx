@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ViewMode, DashboardTab, Course, Assignment, ScheduleEvent, NotificationItem, AchievementBadge, AttendanceRecord } from "./types";
+import { ViewMode, DashboardTab, Course, Assignment, ScheduleEvent, NotificationItem, AchievementBadge, AttendanceRecord, UserThemeSettings, UserProfile } from "./types";
 import {
   initialProfile,
   initialCourses,
@@ -9,6 +9,7 @@ import {
   initialAttendanceRecords,
 } from "./data/initialData";
 import { INITIAL_BADGES, evaluateBadges } from "./data/badgeData";
+import { loadThemeSettings, saveThemeSettings, isGalaxyTheme, DEFAULT_THEME_SETTINGS } from "./utils/themeStorage";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import { LandingPage } from "./components/LandingPage";
@@ -26,6 +27,9 @@ import { LearningPathsTab } from "./components/LearningPathsTab";
 import { QuizTab } from "./components/QuizTab";
 import { SchoolFinderTab } from "./components/SchoolFinderTab";
 import { VideoAnimatorTab } from "./components/VideoAnimatorTab";
+import { ThemeSettingsTab } from "./components/ThemeSettingsTab";
+import { GalaxyBackground } from "./components/GalaxyBackground";
+import { SettingsModal } from "./components/SettingsModal";
 import { AITutorModal } from "./components/AITutorModal";
 import { VoiceCompanionModal } from "./components/VoiceCompanionModal";
 import { TaskModal } from "./components/TaskModal";
@@ -35,14 +39,20 @@ import { BadgeGalleryModal } from "./components/BadgeGalleryModal";
 import { NewBadgeUnlockedModal } from "./components/NewBadgeUnlockedModal";
 
 export default function App() {
+  // Theme and Cosmic Galaxy Settings State
+  const [themeSettings, setThemeSettings] = useState<UserThemeSettings>(loadThemeSettings);
+
   // Navigation & View States
   const [currentView, setCurrentView] = useState<ViewMode>("landing");
   const [activeTab, setActiveTab] = useState<DashboardTab>("my-subjects");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const initial = loadThemeSettings();
+    return initial.activeThemeId !== "light";
+  });
 
   // App Datasets State
-  const [userProfile, setUserProfile] = useState(initialProfile);
+  const [userProfile, setUserProfile] = useState<UserProfile>(initialProfile);
   const [courses, setCourses] = useState<Course[]>(initialCourses);
   const [assignments, setAssignments] = useState<Assignment[]>(initialAssignments);
   const [scheduleEvents, setScheduleEvents] = useState<ScheduleEvent[]>(initialScheduleEvents);
@@ -51,6 +61,7 @@ export default function App() {
   const [badges, setBadges] = useState<AchievementBadge[]>(INITIAL_BADGES);
 
   // Modals & Drawers
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isAITutorOpen, setIsAITutorOpen] = useState(false);
   const [isVoiceCompanionOpen, setIsVoiceCompanionOpen] = useState(false);
   const [aiTutorContext, setAiTutorContext] = useState<string | undefined>(undefined);
@@ -83,17 +94,61 @@ export default function App() {
     }
   }, [courses]);
 
-  // Dark mode side effect
+  // Synchronize Theme Settings with DOM classes and dark mode
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
+    saveThemeSettings(themeSettings);
+    const root = document.documentElement;
+
+    // Clean previous theme classes
+    root.classList.remove(
+      "theme-ai-education",
+      "theme-multiple-galaxy",
+      "theme-starlight-andromeda",
+      "theme-cosmic-nebula",
+      "theme-supernova-gold",
+      "theme-deep-void",
+      "theme-dark",
+      "theme-light"
+    );
+
+    root.classList.add(`theme-${themeSettings.activeThemeId}`);
+
+    const isGalaxy = isGalaxyTheme(themeSettings.activeThemeId);
+    if (isGalaxy || themeSettings.activeThemeId === "dark") {
+      root.classList.add("dark");
+      setIsDarkMode(true);
     } else {
-      document.documentElement.classList.remove("dark");
+      root.classList.remove("dark");
+      setIsDarkMode(false);
     }
-  }, [isDarkMode]);
+  }, [themeSettings]);
 
   // Handlers
-  const handleToggleDarkMode = () => setIsDarkMode(!isDarkMode);
+  const handleToggleDarkMode = () => {
+    const nextDark = !isDarkMode;
+    setIsDarkMode(nextDark);
+    if (nextDark) {
+      setThemeSettings((prev) => ({
+        ...prev,
+        activeThemeId: prev.activeThemeId === "light" ? "multiple-galaxy" : prev.activeThemeId,
+      }));
+    } else {
+      setThemeSettings((prev) => ({ ...prev, activeThemeId: "light" }));
+    }
+  };
+
+  const handleUpdateThemeSettings = (newSettings: Partial<UserThemeSettings>) => {
+    setThemeSettings((prev) => {
+      const updated = { ...prev, ...newSettings };
+      saveThemeSettings(updated);
+      return updated;
+    });
+  };
+
+  const handleResetThemeSettings = () => {
+    setThemeSettings(DEFAULT_THEME_SETTINGS);
+    saveThemeSettings(DEFAULT_THEME_SETTINGS);
+  };
 
   const handleToggleAssignmentStatus = (assignmentId: string) => {
     setAssignments((prev) =>
@@ -141,13 +196,26 @@ export default function App() {
   };
 
   const pendingAssignmentsCount = assignments.filter((a) => a.status === "Pending").length;
+  const isGalaxyActive = isGalaxyTheme(themeSettings.activeThemeId);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans antialiased transition-colors duration-200 selection:bg-indigo-500 selection:text-white relative overflow-hidden">
-      
-      {/* Ambient background blobs for frosted glass effect */}
-      <div className="fixed top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-indigo-400/20 dark:bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none" />
-      <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-400/20 dark:bg-purple-600/20 rounded-full blur-[100px] pointer-events-none" />
+    <div
+      className={`min-h-screen ${
+        isGalaxyActive
+          ? "bg-[#04010e] text-slate-100"
+          : "bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100"
+      } flex flex-col font-sans antialiased transition-colors duration-300 selection:bg-purple-500 selection:text-white relative overflow-hidden`}
+    >
+      {/* 🌌 Dynamic Multiple Galaxy Universe & Starfield Engine */}
+      {isGalaxyActive && <GalaxyBackground settings={themeSettings} />}
+
+      {/* Ambient background blobs for non-galaxy modes */}
+      {!isGalaxyActive && (
+        <>
+          <div className="fixed top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-indigo-400/20 dark:bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none" />
+          <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-400/20 dark:bg-purple-600/20 rounded-full blur-[100px] pointer-events-none" />
+        </>
+      )}
 
       {/* Global Header */}
       <Header
@@ -169,6 +237,8 @@ export default function App() {
         onSearchChange={setSearchQuery}
         unlockedBadgesCount={badges.filter((b) => b.unlocked).length}
         onOpenBadgeGallery={() => setIsBadgeGalleryOpen(true)}
+        themeSettings={themeSettings}
+        onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
       {/* Main Body View Switching */}
@@ -204,7 +274,7 @@ export default function App() {
           />
 
           {/* Dashboard Main Workspace Area */}
-          <main className="flex-1 overflow-y-auto bg-transparent p-4 sm:p-6 lg:p-8 space-y-6 relative z-10">
+          <main className="flex-1 overflow-y-auto bg-transparent p-4 sm:p-6 lg:p-8 space-y-6 relative z-10 custom-scrollbar">
             
             {activeTab === "my-subjects" && (
               <MySubjectsTab
@@ -301,11 +371,30 @@ export default function App() {
             {activeTab === "school-finder" && <SchoolFinderTab />}
             {activeTab === "video-animator" && <VideoAnimatorTab />}
 
+            {/* Dedicated Theme & Galaxy Settings Tab */}
+            {activeTab === "theme-settings" && (
+              <ThemeSettingsTab
+                settings={themeSettings}
+                onUpdateSettings={handleUpdateThemeSettings}
+                onResetSettings={handleResetThemeSettings}
+              />
+            )}
+
           </main>
         </div>
       )}
 
       {/* Global Modals & Drawers */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        user={userProfile}
+        onUpdateUser={setUserProfile}
+        themeSettings={themeSettings}
+        onUpdateThemeSettings={handleUpdateThemeSettings}
+        onResetThemeSettings={handleResetThemeSettings}
+      />
+
       <AITutorModal
         isOpen={isAITutorOpen}
         onClose={() => setIsAITutorOpen(false)}
@@ -354,3 +443,4 @@ export default function App() {
     </div>
   );
 }
+

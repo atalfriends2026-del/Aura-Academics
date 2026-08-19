@@ -1,1 +1,145 @@
 @import "tailwindcss";
+
+@keyframes spinExtremelySlow {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinSlowReverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes shootingStar {
+  0% {
+    transform: translateX(0) translateY(0) scale(0);
+    opacity: 0;
+  }
+  15% {
+    transform: translateX(50px) translateY(40px) scale(1);
+    opacity: 1;
+  }
+  80% {
+    transform: translateX(280px) translateY(220px) scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(360px) translateY(300px) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes cosmicPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.25), 0 0 30px rgba(6, 182, 212, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.45), 0 0 50px rgba(245, 158, 11, 0.25);
+  }
+}
+
+.animate-spin-extremely-slow {
+  animation: spinExtremelySlow 140s linear infinite;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 90s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spinSlowReverse 110s linear infinite;
+}
+
+.animate-shooting-star {
+  animation: shootingStar 2.5s ease-out forwards;
+}
+
+.cosmic-pulse-glow {
+  animation: cosmicPulse 6s ease-in-out infinite;
+}
+
+/* AI in Education & Galaxy Glassmorphism Theme Overrides */
+.theme-ai-education .galaxy-card-crystal {
+  background: rgba(6, 12, 38, 0.7) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-color: rgba(0, 240, 255, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(2, 6, 23, 0.5), inset 0 0 15px rgba(0, 240, 255, 0.05) !important;
+}
+
+.theme-ai-education .galaxy-card-crystal:hover {
+  border-color: rgba(0, 240, 255, 0.6) !important;
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.3), inset 0 0 20px rgba(168, 85, 247, 0.15) !important;
+}
+
+.theme-ai-education .galaxy-header {
+  background: rgba(3, 7, 28, 0.8) !important;
+  backdrop-filter: blur(24px) !important;
+  border-bottom-color: rgba(0, 240, 255, 0.35) !important;
+}
+
+.theme-ai-education .galaxy-sidebar {
+  background: rgba(2, 6, 23, 0.85) !important;
+  backdrop-filter: blur(24px) !important;
+  border-right-color: rgba(0, 240, 255, 0.25) !important;
+}
+
+.theme-multiple-galaxy .galaxy-card-crystal {
+  background: rgba(10, 4, 32, 0.65) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-color: rgba(168, 85, 247, 0.25) !important;
+}
+
+.theme-multiple-galaxy .galaxy-card-crystal:hover {
+  border-color: rgba(216, 180, 254, 0.45) !important;
+  box-shadow: 0 0 25px rgba(147, 51, 234, 0.25) !important;
+}
+
+.theme-multiple-galaxy .galaxy-header {
+  background: rgba(8, 2, 24, 0.75) !important;
+  backdrop-filter: blur(24px) !important;
+  border-bottom-color: rgba(147, 51, 234, 0.3) !important;
+}
+
+.theme-multiple-galaxy .galaxy-sidebar {
+  background: rgba(6, 2, 20, 0.8) !important;
+  backdrop-filter: blur(24px) !important;
+  border-right-color: rgba(147, 51, 234, 0.25) !important;
+}
+
+/* Custom galaxy scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(147, 51, 234, 0.35);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 85, 247, 0.6);
+}

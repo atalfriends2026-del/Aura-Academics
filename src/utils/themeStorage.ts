@@ -1,0 +1,210 @@
+import { ThemeId, ThemeOption, UserThemeSettings } from "../types";
+
+export const THEME_OPTIONS: ThemeOption[] = [
+  {
+    id: "ocean-mode",
+    name: "Ocean Mode",
+    category: "galaxy",
+    tagline: "Vibrant Tropical Coral Reef Paradise & Golden Sunset",
+    description: "Magnificent underwater ocean paradise featuring sunbeams illuminating crystal turquoise waters, graceful sea turtles, schooling yellow snappers, reef sharks, and kaleidoscope coral gardens.",
+    primaryColor: "#06b6d4",
+    secondaryColor: "#3b82f6",
+    accentGlow: "rgba(6, 182, 212, 0.6)",
+    previewGradient: "from-[#011425] via-[#02334f] via-[#046182] to-[#011d33]",
+    badgeLabel: "FEATURED • OCEAN MODE",
+    hasParticles: true,
+    hasSpirals: true,
+  },
+  {
+    id: "aurora",
+    name: "Aurora",
+    category: "galaxy",
+    tagline: "Ethereal Emerald Northern Lights over Arctic Fjord",
+    description: "Breathtaking Arctic panorama with emerald green, turquoise, and violet Aurora Borealis ribbons arching over snow-capped alpine peaks, serene reflective fjords, and a cozy glowing winter cabin.",
+    primaryColor: "#10b981",
+    secondaryColor: "#06b6d4",
+    accentGlow: "rgba(16, 185, 129, 0.6)",
+    previewGradient: "from-[#011414] via-[#042e2b] via-[#021829] to-[#010814]",
+    badgeLabel: "FEATURED • AURORA BOREALIS",
+    hasParticles: true,
+    hasSpirals: true,
+  },
+  {
+    id: "ai-multiple-fields",
+    name: "AI in Multiple Fields",
+    category: "ai-theme",
+    tagline: "Futuristic AI Across Healthcare, Education, Finance, Transport & Beyond",
+    description: "Comprehensive AI ecosystem centered around a glowing holographic AI brain neural core interconnected across 11 key fields: Healthcare, Education, Finance, Transportation, Agriculture, Retail, Manufacturing, Entertainment, Space Exploration, Environment, and Public Safety.",
+    primaryColor: "#00f0ff",
+    secondaryColor: "#3b82f6",
+    accentGlow: "rgba(0, 240, 255, 0.6)",
+    previewGradient: "from-[#020517] via-[#041a40] via-[#10032b] to-[#010817]",
+    badgeLabel: "FEATURED • AI IN MULTIPLE FIELDS",
+    hasParticles: true,
+    hasSpirals: true,
+  },
+  {
+    id: "multiple-galaxy",
+    name: "Multiple Galaxy",
+    category: "galaxy",
+    tagline: "Deep Cosmic Multi-Spiral Universe Masterpiece",
+    description: "Extravagant cosmic panorama featuring a radiant golden super-spiral vortex surrounded by 4 major corner spiral galaxies (Violet Spiral, Golden Disk, Copper Barred Spiral, Azure Swirl) and glowing satellite star systems.",
+    primaryColor: "#f59e0b",
+    secondaryColor: "#8b5cf6",
+    accentGlow: "rgba(245, 158, 11, 0.55)",
+    previewGradient: "from-[#04010e] via-[#240847] via-[#091845] to-[#1a0528]",
+    badgeLabel: "FEATURED • MULTIPLE GALAXY",
+    hasParticles: true,
+    hasSpirals: true,
+  },
+  {
+    id: "ai-education",
+    name: "AI in Education",
+    category: "ai-theme",
+    tagline: "Futuristic Cyber Classroom & Neural AI Holograms",
+    description: "Immersive futuristic classroom powered by glowing neural AI holograms, floating 3D education artifacts (DNA double helix, microscope, open textbook, planetary globe, quantum atom), robotic tutors, and cybernetic glassmorphism.",
+    primaryColor: "#00f0ff",
+    secondaryColor: "#a855f7",
+    accentGlow: "rgba(0, 240, 255, 0.5)",
+    previewGradient: "from-[#020112] via-[#05113d] via-[#1c0840] to-[#04081c]",
+    badgeLabel: "AI Masterpiece",
+    hasParticles: true,
+    hasSpirals: true,
+  },
+  {
+    id: "starlight-andromeda",
+    name: "Starlight Andromeda",
+    category: "ai-theme",
+    tagline: "Futuristic Cybernetic AI Industries Ecosystem",
+    description: "Grand technological universe centered around a glowing AI neural brain hub connected across 10 vital sectors: Healthcare, Education, Finance, Transportation, Agriculture, Retail, Manufacturing, Entertainment, Space Exploration, Environment, and Public Safety.",
+    primaryColor: "#00b4d8",
+    secondaryColor: "#7209b7",
+    accentGlow: "rgba(0, 180, 216, 0.55)",
+    previewGradient: "from-[#020517] via-[#041a40] via-[#10032b] to-[#010817]",
+    badgeLabel: "AI MASTERPIECE • ANDROMEDA",
+    hasParticles: true,
+    hasSpirals: true,
+  },
+  {
+    id: "cosmic-nebula",
+    name: "Cosmic Nebula Swirl",
+    category: "ai-theme",
+    tagline: "Cyberpunk Neon Night Market & Holographic Stream",
+    description: "Atmospheric rainy cyberpunk night market street illuminated by vibrant neon signs (Cybernetics, Ramen-Ya, Datastream, Synth Drinks), holographic wireframe fox, and reflective neon puddles.",
+    primaryColor: "#00f0ff",
+    secondaryColor: "#ec4899",
+    accentGlow: "rgba(0, 240, 255, 0.55)",
+    previewGradient: "from-[#080214] via-[#1f0938] via-[#051a2e] to-[#04010a]",
+    badgeLabel: "CYBER NEON • NIGHT MARKET",
+    hasParticles: true,
+    hasSpirals: true,
+  },
+  {
+    id: "supernova-gold",
+    name: "Supernova Golden Vortex",
+    category: "galaxy",
+    tagline: "Amber Spiral & Solar Corona",
+    description: "Luminous gold and amber spiral galaxy with stellar flare accretion disks and warm cosmic glow.",
+    primaryColor: "#f59e0b",
+    secondaryColor: "#ea580c",
+    accentGlow: "rgba(245, 158, 11, 0.45)",
+    previewGradient: "from-[#140802] via-[#3d1a04] via-[#220d02] to-[#0d0401]",
+    badgeLabel: "Solar Accretion",
+    hasParticles: true,
+    hasSpirals: true,
+  },
+  {
+    id: "deep-void",
+    name: "Deep Astral Void",
+    category: "galaxy",
+    tagline: "Pitch Black Space & Micro-Stars",
+    description: "Minimalist ultra-deep cosmos with pitch black canvas and subtle star cluster twinkles.",
+    primaryColor: "#a78bfa",
+    secondaryColor: "#64748b",
+    accentGlow: "rgba(167, 139, 250, 0.3)",
+    previewGradient: "from-[#020205] via-[#080811] via-[#030308] to-[#000002]",
+    badgeLabel: "Minimal Void",
+    hasParticles: true,
+    hasSpirals: false,
+  },
+  {
+    id: "dark",
+    name: "Midnight Slate",
+    category: "classic",
+    tagline: "Classic Clean Dark Mode",
+    description: "Sleek slate gray dark theme designed for night-time studying without background animations.",
+    primaryColor: "#6366f1",
+    secondaryColor: "#94a3b8",
+    accentGlow: "rgba(99, 102, 241, 0.2)",
+    previewGradient: "from-slate-950 via-slate-900 to-slate-950",
+    badgeLabel: "Standard Dark",
+    hasParticles: false,
+    hasSpirals: false,
+  },
+  {
+    id: "light",
+    name: "Crisp Studio",
+    category: "classic",
+    tagline: "Crisp Academic Light Mode",
+    description: "High-contrast daylight theme with bright canvas, clean typography, and subtle frosted borders.",
+    primaryColor: "#4f46e5",
+    secondaryColor: "#0284c7",
+    accentGlow: "rgba(79, 70, 229, 0.15)",
+    previewGradient: "from-slate-100 via-indigo-50/50 to-white",
+    badgeLabel: "Classic Light",
+    hasParticles: false,
+    hasSpirals: false,
+  },
+];
+
+const THEME_STORAGE_KEY = "aura_academics_theme_settings_v4";
+
+export const DEFAULT_THEME_SETTINGS: UserThemeSettings = {
+  activeThemeId: "ocean-mode", // Default to the vibrant Tropical Ocean Reef Masterpiece!
+  enableStarParticles: true,
+  enableCosmicGlow: true,
+  enableSpiralRotation: true,
+  enableShootingStars: true,
+  enableAIHolograms: true,
+  enableCyberHUD: true,
+  galaxyWallpaperIntensity: 95,
+  cardGlassmorphism: "crystal",
+  accentPalette: "ocean-cyan",
+  fontSizeScale: "normal",
+  soundEffects: false,
+};
+
+export const loadThemeSettings = (): UserThemeSettings => {
+  try {
+    const raw = localStorage.getItem(THEME_STORAGE_KEY);
+    if (!raw) return DEFAULT_THEME_SETTINGS;
+    const parsed = JSON.parse(raw);
+    return { ...DEFAULT_THEME_SETTINGS, ...parsed };
+  } catch (e) {
+    console.warn("Could not load theme settings, using defaults", e);
+    return DEFAULT_THEME_SETTINGS;
+  }
+};
+
+export const saveThemeSettings = (settings: UserThemeSettings): UserThemeSettings => {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(settings));
+  } catch (e) {
+    console.warn("Could not save theme settings", e);
+  }
+  return settings;
+};
+
+export const isGalaxyTheme = (themeId: ThemeId): boolean => {
+  return [
+    "ocean-mode",
+    "aurora",
+    "ai-multiple-fields",
+    "ai-education",
+    "multiple-galaxy",
+    "starlight-andromeda",
+    "cosmic-nebula",
+    "supernova-gold",
+    "deep-void",
+  ].includes(themeId);
+};

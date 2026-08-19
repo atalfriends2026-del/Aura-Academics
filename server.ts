@@ -296,24 +296,25 @@ app.post("/api/ai/video-download", async (req, res) => {
 // ----------------------------------------------------
 app.post("/api/ai/predict-gpa", async (req, res) => {
   try {
-    const { currentGpa, targetGpa, courses, assignments, completedCredits } = req.body;
+    const { currentGpa, targetGpa, courses, assignments, completedCredits, linearSummary } = req.body;
 
     const prompt = `Current Cumulative GPA: ${currentGpa || 3.92}
 Target GPA: ${targetGpa || 4.00}
 Completed Credits: ${completedCredits || 78}
-Courses & Current Grades: ${JSON.stringify(courses)}
-Assignment History & Upcoming Work: ${JSON.stringify(assignments)}
+Linear Regression Summary Metrics: ${JSON.stringify(linearSummary || {})}
+Courses, Linear Slopes & Equations: ${JSON.stringify(courses)}
+Assignment History & Upcoming Work: ${JSON.stringify(assignments || [])}
 
-Act as an AI Academic Predictive Data Analyst. Perform a detailed forecast of the end-of-semester GPA outcomes:
-1. **Forecast Summary**: Predict the student's end-of-semester Term GPA and overall Cumulative GPA based on current trajectory and assignment submission quality.
-2. **Course Risk & Buffer Analysis**: Identify which specific courses need grade elevation to secure an A/A- and specify exact minimum target scores needed on pending assignments.
-3. **Strategic Milestones**: Provide 3 prioritized, high-leverage study actions based on assignment priorities and upcoming deadlines.`;
+Act as an AI Academic Predictive Data Analyst. Perform a detailed forecast of the end-of-semester GPA outcomes incorporating the Ordinary Least Squares (OLS) linear trend equations ($y = mx + b$):
+1. **Forecast Summary**: Predict the student's end-of-semester Term GPA and overall Cumulative GPA based on the linear slope momentum of graded assignments.
+2. **Course Linear Momentum Breakdown**: Highlight top accelerating courses (positive slope $m > 0$) vs decelerating courses ($m < 0$), and specify exact target scores needed on pending assignments.
+3. **Strategic Milestones**: Provide 3 prioritized, high-leverage study actions based on assignment priorities and upcoming deadlines to maximize GPA.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
       contents: prompt,
       config: {
-        systemInstruction: "You are an expert AI Academic Analytics Advisor specializing in grade forecasting, workload optimization, and GPA trajectory modeling.",
+        systemInstruction: "You are an expert AI Academic Analytics Advisor specializing in statistical grade forecasting, linear regression modeling, and GPA trajectory optimization.",
         temperature: 0.4,
       },
     });

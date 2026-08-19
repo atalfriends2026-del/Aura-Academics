@@ -41,6 +41,7 @@ import {
   saveUploadedPDF,
   deleteUploadedPDF,
   formatFileSize,
+  HINDI_7TH_SPLIT_PAGES,
 } from "../utils/pdfStorage";
 import { UploadedSubjectPDF } from "../types";
 import { PDFViewerModal } from "./PDFViewerModal";
@@ -174,13 +175,157 @@ export const MySubjectsTab: React.FC<MySubjectsTabProps> = ({
   const handleQuickAddSamplePDF = () => {
     if (!selectedSubject) return;
 
-    const sampleName = `${selectedSubject.name}_Class7_Study_Notes_and_Practice_Set.pdf`;
+    const isMaths = selectedSubject.id.toLowerCase() === "maths";
+    const isHindi = selectedSubject.id.toLowerCase() === "hindi";
+
+    let sampleName = `${selectedSubject.name}_Class7_Study_Notes_and_Practice_Set.pdf`;
+    if (isMaths) {
+      sampleName = "7th_Standard_Mathematics_Part_2_Textbook.pdf";
+    } else if (isHindi) {
+      sampleName = "7th_Standard_Hindi_NCERT_Full_Textbook.pdf";
+    }
+
+    const mathsSplitPages = [
+      {
+        pageNumber: 1,
+        title: "Page 1: Chapter 7 - Comparing Quantities (Percentages, Profit & Loss, Simple Interest)",
+        excerpt: `Ratio & Percentage Conversions:
+• Ratio: Comparison of two quantities in identical units (e.g. 5 m to 25 cm = 500 cm : 25 cm = 20 : 1).
+• Fraction to Percentage: (3/5) × 100% = 60%.
+
+Profit & Loss Calculations:
+• Profit = SP - CP | Profit % = (Profit / CP) × 100
+• Loss = CP - SP | Loss % = (Loss / CP) × 100
+
+Simple Interest Formula:
+• SI = (P × R × T) / 100
+• Total Amount = P + SI
+Worked Example: Principal P = ₹4,000, Rate R = 5% per annum, Time T = 3 years.
+SI = (4000 × 5 × 3) / 100 = ₹600. Total Repayment Amount = ₹4,000 + ₹600 = ₹4,600.`,
+      },
+      {
+        pageNumber: 2,
+        title: "Page 2: Chapter 8 - Rational Numbers & Arithmetic Operations",
+        excerpt: `Definition of Rational Numbers:
+• Any number written as p/q where p, q are integers and q ≠ 0.
+• Positive Rational (3/7, -4/-9) and Negative Rational (-5/8, 2/-3).
+• Standard Form: -15/35 reduces to -3/7 (coprime and positive denominator).
+
+Arithmetic Operations:
+• Addition: (-7/5) + (2/3) = (-21 + 10) / 15 = -11/15.
+• Multiplication: (4/9) × (-3/8) = (4 × -3) / (9 × 8) = -12/72 = -1/6.
+• Division: (2/7) ÷ (-4/21) = (2/7) × (21/-4) = 42/-28 = -3/2 = -1 1/2.`,
+      },
+      {
+        pageNumber: 3,
+        title: "Page 3: Chapter 9 - Perimeter & Area (Parallelograms, Triangles & Circles)",
+        excerpt: `Area Formulas:
+• Area of Parallelogram = Base × Height (b × h).
+  Example: Base = 8 cm, Height = 4.5 cm => Area = 8 × 4.5 = 36 cm².
+• Area of Triangle = 1/2 × Base × Height = 1/2 × b × h.
+  Example: Base = 6 cm, Height = 5 cm => Area = 1/2 × 6 × 5 = 15 cm².
+
+Circle Measurements:
+• Circumference = 2πr = πd (using π = 22/7).
+• Area of Circle = πr².
+Worked Problem: The diameter of a circular pipe is 14 cm.
+Radius r = 7 cm.
+Circumference = 2 × (22/7) × 7 = 44 cm.
+Area = (22/7) × 7 × 7 = 154 cm².`,
+      },
+      {
+        pageNumber: 4,
+        title: "Page 4: Chapter 10 - Algebraic Expressions (Terms, Operations & Evaluation)",
+        excerpt: `Terms, Factors & Coefficients:
+• In expression 5x²y - 3xy + 7:
+  Terms are 5x²y, -3xy, and 7.
+  Coefficient of x²y is 5, coefficient of xy is -3.
+
+Like vs Unlike Terms:
+• Like terms: 4x² and -9x² (same variables with identical powers).
+• Unlike terms: 4x² and 4x (different powers).
+
+Addition & Evaluation:
+• Sum of (3x² + 5x - 4) and (2x² - 8x + 7) = 5x² - 3x + 3.
+• Evaluating: If a = 2, b = -3, find value of a² - 2ab + b²:
+  = 2² - 2(2)(-3) + (-3)² = 4 - (-12) + 9 = 4 + 12 + 9 = 25.`,
+      },
+      {
+        pageNumber: 5,
+        title: "Page 5: Chapter 11 - Exponents & Powers (Laws of Exponents & Scientific Form)",
+        excerpt: `Laws of Exponents:
+1. a^m × a^n = a^(m + n)  =>  2³ × 2⁴ = 2⁷ = 128
+2. a^m ÷ a^n = a^(m - n)  =>  5⁶ ÷ 5² = 5⁴ = 625
+3. (a^m)^n = a^(m × n)   =>  (3²)³ = 3⁶ = 729
+4. a^m × b^m = (a × b)^m  =>  2³ × 5³ = 10³ = 1000
+5. a⁰ = 1                =>  7⁰ = 1, (100)⁰ = 1
+
+Scientific Notation (Standard Form):
+• Speed of Light = 300,000,000 m/s = 3.0 × 10⁸ m/s.
+• Population of country = 1,380,000,000 = 1.38 × 10⁹.`,
+      },
+      {
+        pageNumber: 6,
+        title: "Page 6: Chapter 12 - Symmetry (Line Symmetry & Rotational Symmetry)",
+        excerpt: `Line Symmetry:
+• Equilateral Triangle: 3 lines of symmetry
+• Square: 4 lines of symmetry (2 medians, 2 diagonals)
+• Rectangle: 2 lines of symmetry
+• Circle: Infinite lines of symmetry passing through center.
+
+Rotational Symmetry:
+• Center of Rotation: The fixed point around which rotation occurs.
+• Angle of Rotation: 90° for square, 120° for equilateral triangle, 180° for rectangle.
+• Order of Rotational Symmetry:
+  Square = Order 4 | Equilateral Triangle = Order 3 | Rectangle = Order 2 | Circle = Infinite order.`,
+      },
+      {
+        pageNumber: 7,
+        title: "Page 7: Chapter 13 - Visualising Solid Shapes & Euler's Formula",
+        excerpt: `3D Shapes: Faces, Vertices & Edges:
+• Faces (F): Flat surfaces of the 3D solid.
+• Vertices (V): Corner points where edges meet.
+• Edges (E): Line segments where faces intersect.
+
+Euler's Formula: F + V - E = 2
+1. Cube / Cuboid: F = 6, V = 8, E = 12 => 6 + 8 - 12 = 2.
+2. Triangular Prism: F = 5, V = 6, E = 9 => 5 + 6 - 9 = 2.
+3. Square Pyramid: F = 5, V = 5, E = 8 => 5 + 5 - 8 = 2.
+
+Nets of Solids:
+• A net is a 2D foldable blueprint of a 3D solid (e.g. 6 connected squares fold into a cube).`,
+      },
+    ];
+
+    let resolvedFileSize = "1.9 MB";
+    let resolvedPageCount = 24;
+    let resolvedDescription = `Uploaded Study PDF Document for 7th Standard ${selectedSubject.name}`;
+    let resolvedCategory: UploadedSubjectPDF["category"] = uploadCategory || "Notes";
+    let resolvedPreviewText = `7TH STANDARD ${selectedSubject.name.toUpperCase()} - REVISION & STUDY PDF\n\nSubject: ${selectedSubject.name} (${selectedSubject.code})\nCategory: ${uploadCategory || "Notes"}`;
+    let resolvedSplitPages = undefined;
+
+    if (isMaths) {
+      resolvedFileSize = "7.4 MB";
+      resolvedPageCount = 148;
+      resolvedCategory = "Textbook";
+      resolvedDescription = "Official 7th Standard Mathematics Part 2 Textbook (NCERT / State Board) covering Chapters 7 to 13 with solved examples.";
+      resolvedPreviewText = `7TH STANDARD MATHEMATICS (PART 2) TEXTBOOK\nSYLLABUS FOR CLASS 7 (PART 2):\n• Chapter 7: Comparing Quantities\n• Chapter 8: Rational Numbers\n• Chapter 9: Perimeter and Area\n• Chapter 10: Algebraic Expressions\n• Chapter 11: Exponents and Powers\n• Chapter 12: Symmetry\n• Chapter 13: Visualising Solid Shapes`;
+      resolvedSplitPages = mathsSplitPages;
+    } else if (isHindi) {
+      resolvedFileSize = "8.6 MB";
+      resolvedPageCount = 164;
+      resolvedCategory = "Textbook";
+      resolvedDescription = "Official 7th Standard NCERT Hindi Literature & Grammar Textbook (वसंत भाग-2 एवं मल्हार सम्पूर्ण गाइड).";
+      resolvedPreviewText = `कक्षा 7 हिंदी (वसंत भाग-2 एवं मल्हार) सम्पूर्ण एनसीईआरटी पाठ्यपुस्तक\n7TH STANDARD NCERT HINDI OFFICIAL FULL TEXTBOOK\n\nपाठ 1: हम पंछी उन्मुक्त गगन के\nपाठ 2: दादी माँ\nपाठ 3: हिमालय की बेटियाँ\nपाठ 4: कठपुतली\nपाठ 5: मिठाईवाला\nपाठ 6: रक्त और हमारा शरीर\nपाठ 7: पापा खो गए\nपाठ 8: शाम - एक किसान\nपाठ 11: रहीम के दोहे\nपाठ 13: एक तिनका\nव्याकरण: संधि, समास, कारक, काल, मुहावरे एवं पत्र लेखन।`;
+      resolvedSplitPages = HINDI_7TH_SPLIT_PAGES;
+    }
+
     const newPDF: UploadedSubjectPDF = {
       id: "pdf-" + Date.now() + "-" + Math.random().toString(36).substring(2, 7),
       subjectId: selectedSubject.id,
       subjectName: selectedSubject.name,
       fileName: sampleName,
-      fileSize: "1.9 MB",
+      fileSize: resolvedFileSize,
       uploadDate: new Date().toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
@@ -188,19 +333,12 @@ export const MySubjectsTab: React.FC<MySubjectsTabProps> = ({
         hour: "2-digit",
         minute: "2-digit",
       }),
-      category: uploadCategory || "Notes",
-      description: `Uploaded Study PDF Document for 7th Standard ${selectedSubject.name}`,
-      previewText: `7TH STANDARD ${selectedSubject.name.toUpperCase()} - REVISION & STUDY PDF
-
-Subject: ${selectedSubject.name} (${selectedSubject.code})
-Category: ${uploadCategory || "Notes"}
-Topics Covered: ${selectedSubject.topics.slice(0, 5).join(", ")}
-
-KEY CONCEPTS & REVISION NOTES:
-1. Core Definitions & Principles for ${selectedSubject.name}
-2. Step-by-Step Solved Problems & Examples
-3. Practice Exercise Questions & Formula References
-4. Board Examination Quick Model Papers`,
+      category: resolvedCategory,
+      gradeStandard: "7th Standard",
+      pageCount: resolvedPageCount,
+      description: resolvedDescription,
+      previewText: resolvedPreviewText,
+      splitPages: resolvedSplitPages,
     };
 
     const updated = saveUploadedPDF(newPDF);
@@ -906,18 +1044,19 @@ KEY CONCEPTS & REVISION NOTES:
 
                             <div className="flex items-center space-x-2 shrink-0">
                               <button
-                                onClick={() =>
+                                onClick={() => {
+                                  const allPages = book.chapters.flatMap((c) => c.splitPages || []);
                                   setViewerPDF({
                                     title: book.title,
                                     subjectName: selectedSubject.name,
                                     previewText: book.description,
-                                    splitPages: book.chapters[0]?.splitPages,
-                                  })
-                                }
+                                    splitPages: allPages.length > 0 ? allPages : book.chapters[0]?.splitPages,
+                                  });
+                                }}
                                 className="px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-extrabold text-xs hover:bg-emerald-100 dark:hover:bg-emerald-900 transition-colors flex items-center space-x-1"
                               >
                                 <Eye className="w-3.5 h-3.5" />
-                                <span>Read Textbook</span>
+                                <span>Read Full Textbook</span>
                               </button>
 
                               <button

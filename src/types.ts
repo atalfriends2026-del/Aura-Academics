@@ -14,7 +14,52 @@ export type DashboardTab =
   | "learning-path"
   | "quiz"
   | "school-finder"
-  | "video-animator";
+  | "video-animator"
+  | "theme-settings";
+
+export type ThemeId =
+  | "ocean-mode"
+  | "aurora"
+  | "ai-multiple-fields"
+  | "ai-education"
+  | "multiple-galaxy"
+  | "starlight-andromeda"
+  | "cosmic-nebula"
+  | "supernova-gold"
+  | "deep-void"
+  | "light"
+  | "dark";
+
+export interface ThemeOption {
+  id: ThemeId;
+  name: string;
+  category: "ai-theme" | "galaxy" | "classic";
+  tagline: string;
+  description: string;
+  primaryColor: string;
+  secondaryColor: string;
+  accentGlow: string;
+  previewGradient: string;
+  badgeLabel?: string;
+  hasParticles: boolean;
+  hasSpirals: boolean;
+}
+
+export interface UserThemeSettings {
+  activeThemeId: ThemeId;
+  enableStarParticles: boolean;
+  enableCosmicGlow: boolean;
+  enableSpiralRotation: boolean;
+  enableShootingStars: boolean;
+  enableAIHolograms?: boolean;
+  enableCyberHUD?: boolean;
+  galaxyWallpaperIntensity: number; // 20 to 100
+  cardGlassmorphism: "crystal" | "frosted" | "solid";
+  accentPalette: "cosmic-purple" | "starlight-cyan" | "celestial-gold" | "nebula-magenta" | "emerald-aurora" | "cyber-cyan" | "ocean-cyan";
+  fontSizeScale: "compact" | "normal" | "spacious";
+  soundEffects: boolean;
+}
+
 
 export interface QuizQuestion {
   id: string;
@@ -186,9 +231,11 @@ export interface UploadedSubjectPDF {
   uploadDate: string;
   fileDataUrl?: string;
   pageCount?: number;
+  gradeStandard?: string;
   category?: "Homework" | "Notes" | "Question Paper" | "Textbook" | "Reference";
   description?: string;
   previewText?: string;
+  splitPages?: Array<{ pageNumber: number; title: string; excerpt: string }>;
 }
 
 

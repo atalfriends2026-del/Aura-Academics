@@ -18,6 +18,7 @@ import {
   Bot,
   ChevronsLeft,
   ChevronsRight,
+  Palette,
 } from "lucide-react";
 
 interface SidebarNavItem {
@@ -165,6 +166,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
       icon: Sparkles,
       color: "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 border-orange-200 dark:border-orange-800",
       action: () => onSelectTab("video-animator"),
+    },
+    {
+      id: "theme-settings",
+      label: "Theme & Galaxy Settings",
+      icon: Palette,
+      color: "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/60 border-purple-200 dark:border-purple-800",
+      action: () => onSelectTab("theme-settings"),
+      badge: "Multiple Galaxy",
+      badgeBg: "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300 font-black",
     },
   ];
 

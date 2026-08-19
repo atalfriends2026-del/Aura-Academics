@@ -1,5 +1,5 @@
 import React from "react";
-import { ViewMode, UserProfile, NotificationItem } from "../types";
+import { ViewMode, UserProfile, NotificationItem, UserThemeSettings } from "../types";
 import {
   GraduationCap,
   Compass,
@@ -11,6 +11,8 @@ import {
   Sparkles,
   ArrowRight,
   Trophy,
+  Palette,
+  Settings,
 } from "lucide-react";
 
 interface HeaderProps {
@@ -26,6 +28,8 @@ interface HeaderProps {
   onSearchChange: (q: string) => void;
   unlockedBadgesCount?: number;
   onOpenBadgeGallery?: () => void;
+  themeSettings?: UserThemeSettings;
+  onOpenSettings?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -41,8 +45,11 @@ export const Header: React.FC<HeaderProps> = ({
   onSearchChange,
   unlockedBadgesCount = 0,
   onOpenBadgeGallery,
+  themeSettings,
+  onOpenSettings,
 }) => {
   const unreadCount = notifications.filter((n) => n.unread).length;
+  const isGalaxy = themeSettings?.activeThemeId === "multiple-galaxy";
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-white/50 dark:border-slate-800/50 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl transition-colors duration-200">
@@ -62,8 +69,8 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="text-xl font-black tracking-tight bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
                   Aura<span className="text-slate-900 dark:text-white font-semibold ml-1">Academics</span>
                 </span>
-                <span className="hidden sm:inline-block ml-2 px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60">
-                  v3.2 AI
+                <span className="hidden sm:inline-block ml-2 px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded-full bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60">
+                  {isGalaxy ? "🌌 Galaxy Edition" : "v3.2 AI"}
                 </span>
               </div>
             </button>
@@ -122,6 +129,19 @@ export const Header: React.FC<HeaderProps> = ({
               <span>Ask AI Tutor</span>
             </button>
 
+            {/* Quick Multiple Galaxy / Theme Settings Button */}
+            {onOpenSettings && (
+              <button
+                onClick={onOpenSettings}
+                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-purple-500/15 via-indigo-500/15 to-cyan-500/15 border border-purple-500/40 text-purple-600 dark:text-purple-300 hover:bg-purple-500/25 transition-all shadow-xs"
+                title="Open Multiple Galaxy & Theme Settings"
+                aria-label="Theme Settings"
+              >
+                <Palette className="w-4 h-4 text-purple-500 animate-pulse" />
+                <span className="hidden md:inline-block">Themes</span>
+              </button>
+            )}
+
             {/* Dark/Light Mode Toggle */}
             <button
               onClick={onToggleDarkMode}
@@ -171,6 +191,17 @@ export const Header: React.FC<HeaderProps> = ({
                   )}
                 </button>
 
+                {/* Settings Gear (Small Screen or Quick Access) */}
+                {onOpenSettings && (
+                  <button
+                    onClick={onOpenSettings}
+                    className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    title="App Settings"
+                  >
+                    <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                  </button>
+                )}
+
                 {/* User Avatar */}
                 <div className="flex items-center space-x-2">
                   <img
@@ -193,3 +224,4 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
+

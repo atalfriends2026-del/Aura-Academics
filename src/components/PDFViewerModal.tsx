@@ -145,22 +145,43 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
           ) : splitPages && splitPages.length > 0 ? (
             /* Render Split Pages PDF Reader for Textbook Chapters */
             <div className="w-full max-w-3xl space-y-4">
-              <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                <span className="text-xs font-black text-slate-700 dark:text-slate-300">
-                  Page {activePageIndex + 1} of {splitPages.length}
-                </span>
-                <div className="flex space-x-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <BookOpen className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  <span className="text-xs font-black text-slate-700 dark:text-slate-300">
+                    Page {activePageIndex + 1} of {splitPages.length}
+                  </span>
+                </div>
+                
+                {/* Direct Page Jump Pills */}
+                <div className="flex items-center space-x-1.5 overflow-x-auto py-1 max-w-full">
+                  {splitPages.map((page, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActivePageIndex(idx)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold transition-all whitespace-nowrap ${
+                        activePageIndex === idx
+                          ? "bg-indigo-600 text-white shadow-sm"
+                          : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                      }`}
+                    >
+                      P.{page.pageNumber}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex space-x-2 shrink-0">
                   <button
                     disabled={activePageIndex === 0}
                     onClick={() => setActivePageIndex((p) => Math.max(0, p - 1))}
-                    className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-40"
+                    className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-40 hover:bg-slate-200 transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button
                     disabled={activePageIndex === splitPages.length - 1}
                     onClick={() => setActivePageIndex((p) => Math.min(splitPages.length - 1, p + 1))}
-                    className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-40"
+                    className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-40 hover:bg-slate-200 transition-colors"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -176,17 +197,24 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
                   <h4 className="font-black text-indigo-600 dark:text-indigo-400 text-base">
                     {splitPages[activePageIndex].title}
                   </h4>
-                  <span className="text-xs font-bold text-slate-400">
+                  <span className="text-xs font-bold text-slate-400 px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">
                     Page {splitPages[activePageIndex].pageNumber}
                   </span>
                 </div>
 
-                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+                <div className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium whitespace-pre-line">
                   {splitPages[activePageIndex].excerpt}
-                </p>
+                </div>
 
-                <div className="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-400 italic">
-                  [Official PDF Page Preview for {pdfTitle}]
+                <div className="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                  <span className="italic">[Official Textbook Edition • {pdfTitle}]</span>
+                  <button
+                    onClick={() => onOpenAITutor(`${splitPages[activePageIndex].title} (${pdfTitle})`)}
+                    className="text-purple-600 dark:text-purple-400 hover:underline font-bold flex items-center space-x-1"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span>Explain this page with AI</span>
+                  </button>
                 </div>
               </div>
             </div>
