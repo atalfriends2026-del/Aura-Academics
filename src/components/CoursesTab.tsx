@@ -18,7 +18,7 @@ import {
   Filter,
   RotateCcw,
 } from "lucide-react";
-import confetti from "canvas-confetti";
+import { triggerConfetti } from "../utils/confetti";
 
 interface CoursesTabProps {
   courses: Course[];
@@ -57,7 +57,7 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({
     });
 
     if (targetIsNowCompleted) {
-      confetti({
+      triggerConfetti({
         particleCount: 50,
         spread: 60,
         origin: { y: 0.7 },

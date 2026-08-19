@@ -14,6 +14,13 @@ export const THEME_OPTIONS: ThemeOption[] = [
     badgeLabel: "FEATURED • OCEAN MODE",
     hasParticles: true,
     hasSpirals: true,
+    paletteSample: [
+      { name: "Turquoise Reef", hex: "#06b6d4", role: "primary" },
+      { name: "Deep Coral Blue", hex: "#3b82f6", role: "secondary" },
+      { name: "Sunset Sunbeam", hex: "#f59e0b", role: "accent" },
+      { name: "Biolum Glow", hex: "#22d3ee", role: "glow" },
+      { name: "Abyssal Navy", hex: "#011425", role: "surface" },
+    ],
   },
   {
     id: "aurora",
@@ -28,6 +35,13 @@ export const THEME_OPTIONS: ThemeOption[] = [
     badgeLabel: "FEATURED • AURORA BOREALIS",
     hasParticles: true,
     hasSpirals: true,
+    paletteSample: [
+      { name: "Emerald Aurora", hex: "#10b981", role: "primary" },
+      { name: "Arctic Cyan", hex: "#06b6d4", role: "secondary" },
+      { name: "Polar Violet", hex: "#8b5cf6", role: "accent" },
+      { name: "Borealis Shimmer", hex: "#34d399", role: "glow" },
+      { name: "Fjord Darkness", hex: "#011414", role: "surface" },
+    ],
   },
   {
     id: "ai-multiple-fields",
@@ -42,6 +56,13 @@ export const THEME_OPTIONS: ThemeOption[] = [
     badgeLabel: "FEATURED • AI IN MULTIPLE FIELDS",
     hasParticles: true,
     hasSpirals: true,
+    paletteSample: [
+      { name: "Holo Neon Cyan", hex: "#00f0ff", role: "primary" },
+      { name: "Neural Blue", hex: "#3b82f6", role: "secondary" },
+      { name: "Quantum Purple", hex: "#a855f7", role: "accent" },
+      { name: "Data Stream", hex: "#38bdf8", role: "glow" },
+      { name: "Deep Cyber Void", hex: "#020517", role: "surface" },
+    ],
   },
   {
     id: "multiple-galaxy",
@@ -56,6 +77,13 @@ export const THEME_OPTIONS: ThemeOption[] = [
     badgeLabel: "FEATURED • MULTIPLE GALAXY",
     hasParticles: true,
     hasSpirals: true,
+    paletteSample: [
+      { name: "Solar Spiral Gold", hex: "#f59e0b", role: "primary" },
+      { name: "Nebula Violet", hex: "#8b5cf6", role: "secondary" },
+      { name: "Supernova Pink", hex: "#ec4899", role: "accent" },
+      { name: "Stellar Shimmer", hex: "#fbbf24", role: "glow" },
+      { name: "Cosmic Deep Space", hex: "#04010e", role: "surface" },
+    ],
   },
   {
     id: "ai-education",
@@ -70,6 +98,13 @@ export const THEME_OPTIONS: ThemeOption[] = [
     badgeLabel: "AI Masterpiece",
     hasParticles: true,
     hasSpirals: true,
+    paletteSample: [
+      { name: "Cyber Cyan", hex: "#00f0ff", role: "primary" },
+      { name: "Holo Lavender", hex: "#a855f7", role: "secondary" },
+      { name: "Digital Mint", hex: "#10b981", role: "accent" },
+      { name: "Neon Glow", hex: "#67e8f9", role: "glow" },
+      { name: "Cyber Lab Dark", hex: "#020112", role: "surface" },
+    ],
   },
   {
     id: "starlight-andromeda",
@@ -84,6 +119,13 @@ export const THEME_OPTIONS: ThemeOption[] = [
     badgeLabel: "AI MASTERPIECE • ANDROMEDA",
     hasParticles: true,
     hasSpirals: true,
+    paletteSample: [
+      { name: "Andromeda Azure", hex: "#00b4d8", role: "primary" },
+      { name: "Sector Purple", hex: "#7209b7", role: "secondary" },
+      { name: "Laser Magenta", hex: "#f72585", role: "accent" },
+      { name: "Cosmic Beacon", hex: "#4cc9f0", role: "glow" },
+      { name: "Deep Tech Matrix", hex: "#020517", role: "surface" },
+    ],
   },
   {
     id: "cosmic-nebula",
@@ -98,6 +140,13 @@ export const THEME_OPTIONS: ThemeOption[] = [
     badgeLabel: "CYBER NEON • NIGHT MARKET",
     hasParticles: true,
     hasSpirals: true,
+    paletteSample: [
+      { name: "Electric Cyan", hex: "#00f0ff", role: "primary" },
+      { name: "Synthwave Pink", hex: "#ec4899", role: "secondary" },
+      { name: "Neon Violet", hex: "#9333ea", role: "accent" },
+      { name: "Puddle Glint", hex: "#22d3ee", role: "glow" },
+      { name: "Midnight Alley", hex: "#080214", role: "surface" },
+    ],
   },
   {
     id: "supernova-gold",
@@ -112,6 +161,13 @@ export const THEME_OPTIONS: ThemeOption[] = [
     badgeLabel: "Solar Accretion",
     hasParticles: true,
     hasSpirals: true,
+    paletteSample: [
+      { name: "Solar Amber", hex: "#f59e0b", role: "primary" },
+      { name: "Corona Orange", hex: "#ea580c", role: "secondary" },
+      { name: "Sun Flare Gold", hex: "#fbbf24", role: "accent" },
+      { name: "Solar Flare Glow", hex: "#fde68a", role: "glow" },
+      { name: "Deep Flare Void", hex: "#140802", role: "surface" },
+    ],
   },
   {
     id: "deep-void",
@@ -126,6 +182,13 @@ export const THEME_OPTIONS: ThemeOption[] = [
     badgeLabel: "Minimal Void",
     hasParticles: true,
     hasSpirals: false,
+    paletteSample: [
+      { name: "Astral Lavender", hex: "#a78bfa", role: "primary" },
+      { name: "Slate Nebula", hex: "#64748b", role: "secondary" },
+      { name: "Micro Star Silver", hex: "#cbd5e1", role: "accent" },
+      { name: "Void Twilight", hex: "#c4b5fd", role: "glow" },
+      { name: "Pitch Astral Void", hex: "#020205", role: "surface" },
+    ],
   },
   {
     id: "dark",
@@ -140,6 +203,13 @@ export const THEME_OPTIONS: ThemeOption[] = [
     badgeLabel: "Standard Dark",
     hasParticles: false,
     hasSpirals: false,
+    paletteSample: [
+      { name: "Slate Indigo", hex: "#6366f1", role: "primary" },
+      { name: "Cool Slate", hex: "#94a3b8", role: "secondary" },
+      { name: "Deep Iris", hex: "#4f46e5", role: "accent" },
+      { name: "Border Highlight", hex: "#334155", role: "glow" },
+      { name: "Midnight Charcoal", hex: "#0f172a", role: "surface" },
+    ],
   },
   {
     id: "light",
@@ -154,6 +224,13 @@ export const THEME_OPTIONS: ThemeOption[] = [
     badgeLabel: "Classic Light",
     hasParticles: false,
     hasSpirals: false,
+    paletteSample: [
+      { name: "Academic Indigo", hex: "#4f46e5", role: "primary" },
+      { name: "Sky Azure", hex: "#0284c7", role: "secondary" },
+      { name: "Focus Emerald", hex: "#059669", role: "accent" },
+      { name: "Ice Glow", hex: "#e0e7ff", role: "glow" },
+      { name: "Crisp White Surface", hex: "#f8fafc", role: "surface" },
+    ],
   },
 ];
 

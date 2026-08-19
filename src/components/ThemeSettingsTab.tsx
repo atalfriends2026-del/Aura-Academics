@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { UserThemeSettings, ThemeId } from "../types";
 import { THEME_OPTIONS, isGalaxyTheme } from "../utils/themeStorage";
+import { ThemePalettePreviewCard } from "./ThemePalettePreviewCard";
 import oceanModeWallpaper from "../assets/images/ocean_mode_wallpaper.jpg";
 import auroraWallpaper from "../assets/images/aurora_wallpaper.jpg";
 import aiMultipleFieldsWallpaper from "../assets/images/ai_multiple_fields_wallpaper.jpg";
@@ -43,11 +44,36 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
   onResetSettings,
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<"galaxy-themes" | "customizer" | "display">("galaxy-themes");
+  const [previewThemeId, setPreviewThemeId] = useState<ThemeId>(settings.activeThemeId);
   const isCurrentGalaxy = isGalaxyTheme(settings.activeThemeId);
 
+  const getThemeWallpaper = (themeId: ThemeId) => {
+    switch (themeId) {
+      case "ocean-mode":
+        return oceanModeWallpaper;
+      case "aurora":
+        return auroraWallpaper;
+      case "ai-multiple-fields":
+        return aiMultipleFieldsWallpaper;
+      case "multiple-galaxy":
+        return multipleGalaxyWallpaper;
+      case "ai-education":
+        return aiEducationWallpaper;
+      case "starlight-andromeda":
+        return starlightAndromedaWallpaper;
+      case "cosmic-nebula":
+        return cosmicNebulaSwirlWallpaper;
+      default:
+        return null;
+    }
+  };
+
   const handleSelectTheme = (themeId: ThemeId) => {
+    setPreviewThemeId(themeId);
     onUpdateSettings({ activeThemeId: themeId });
   };
+
+  const inspectedTheme = THEME_OPTIONS.find((t) => t.id === previewThemeId) || THEME_OPTIONS[0];
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-12">
@@ -134,7 +160,20 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
 
       {/* TAB 1: GALAXY & AI THEMES GALLERY */}
       {activeSubTab === "galaxy-themes" && (
-        <div className="space-y-6">
+        <div className="space-y-8">
+
+          {/* Visual Palette Preview & Pre-Application Inspector Card */}
+          <ThemePalettePreviewCard
+            theme={inspectedTheme}
+            isActive={settings.activeThemeId === inspectedTheme.id}
+            onApplyTheme={handleSelectTheme}
+            wallpaperSrc={getThemeWallpaper(inspectedTheme.id)}
+            allThemes={THEME_OPTIONS}
+            onSelectPreviewTheme={(id) => {
+              setPreviewThemeId(id);
+              document.getElementById("theme-palette-inspector-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+          />
           
           {/* Section 1: Cosmic Multi-Galaxy & AI Themes */}
           <div>
@@ -153,6 +192,7 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {THEME_OPTIONS.filter((t) => t.category === "galaxy" || t.category === "ai-theme").map((theme) => {
                 const isSelected = settings.activeThemeId === theme.id;
+                const isInspected = inspectedTheme.id === theme.id;
                 const isOcean = theme.id === "ocean-mode";
                 const isAurora = theme.id === "aurora";
                 const isAIMultipleFields = theme.id === "ai-multiple-fields";
@@ -164,7 +204,10 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                 return (
                   <div
                     key={theme.id}
-                    onClick={() => handleSelectTheme(theme.id)}
+                    onClick={() => {
+                      setPreviewThemeId(theme.id);
+                      handleSelectTheme(theme.id);
+                    }}
                     className={`group relative overflow-hidden rounded-3xl p-5 cursor-pointer transition-all duration-300 border text-left flex flex-col justify-between ${
                       isSelected
                         ? isOcean
@@ -182,6 +225,8 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                           : isAIEdu
                           ? "ring-2 ring-cyan-400 border-cyan-300 shadow-2xl shadow-cyan-500/30 bg-slate-950 text-white scale-[1.02]"
                           : "ring-2 ring-purple-500 border-purple-400 shadow-xl shadow-purple-500/20 bg-slate-900/90 text-white scale-[1.02]"
+                        : isInspected
+                        ? "bg-slate-900/90 border-cyan-400/80 shadow-lg text-slate-200"
                         : "bg-slate-900/70 hover:bg-slate-900/90 border-slate-800/80 hover:border-cyan-500/50 text-slate-200"
                     }`}
                   >
@@ -353,7 +398,7 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                     </div>
 
                     {/* Text Details */}
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <h4 className="font-extrabold text-sm text-white flex items-center gap-1.5">
                           <span>{theme.name}</span>
@@ -388,19 +433,52 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                       <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
                         {theme.description}
                       </p>
+
+                      {/* Miniature Color Palette Sample Strip */}
+                      <div className="pt-2 border-t border-slate-800/60">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                            <Palette className="w-3 h-3 text-cyan-400" />
+                            Palette Sample:
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          {theme.paletteSample.map((swatch, sIdx) => (
+                            <div
+                              key={sIdx}
+                              title={`${swatch.name} (${swatch.hex}) - ${swatch.role}`}
+                              className="flex-1 h-3.5 rounded-md border border-white/10 shadow-xs transition-transform hover:scale-110"
+                              style={{ backgroundColor: swatch.hex }}
+                            />
+                          ))}
+                        </div>
+                      </div>
                     </div>
 
                     {/* Action Button Indicator */}
-                    <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                      <span className="text-[11px] font-bold text-slate-400">
-                        {isSelected ? "Currently Active" : "Click to Apply"}
-                      </span>
+                    <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPreviewThemeId(theme.id);
+                          document.getElementById("theme-palette-inspector-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }}
+                        className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 border ${
+                          isInspected
+                            ? "bg-cyan-500/20 text-cyan-300 border-cyan-400/40 shadow-xs"
+                            : "bg-slate-800/80 hover:bg-slate-700 text-slate-300 border-slate-700"
+                        }`}
+                      >
+                        <Eye className="w-3 h-3" />
+                        <span>Inspect</span>
+                      </button>
+
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleSelectTheme(theme.id);
                         }}
-                        className={`px-3 py-1 rounded-lg text-xs font-black transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
                           isSelected
                             ? isOcean
                               ? "bg-cyan-400 text-slate-950 font-black shadow-md shadow-cyan-500/40"
@@ -441,45 +519,88 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {THEME_OPTIONS.filter((t) => t.category === "classic").map((theme) => {
                 const isSelected = settings.activeThemeId === theme.id;
+                const isInspected = inspectedTheme.id === theme.id;
                 return (
                   <div
                     key={theme.id}
-                    onClick={() => handleSelectTheme(theme.id)}
-                    className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${
+                    onClick={() => {
+                      setPreviewThemeId(theme.id);
+                      handleSelectTheme(theme.id);
+                    }}
+                    className={`p-4 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-3 ${
                       isSelected
                         ? "ring-2 ring-indigo-500 border-indigo-400 bg-indigo-50/50 dark:bg-slate-800/90 shadow-md"
+                        : isInspected
+                        ? "ring-1 ring-cyan-400 bg-white/90 dark:bg-slate-900/80 border-cyan-400/50"
                         : "bg-white/80 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-slate-700"
                     }`}
                   >
-                    <div className="flex items-center space-x-3.5">
-                      <div
-                        className={`w-10 h-10 rounded-xl bg-gradient-to-tr ${theme.previewGradient} border border-slate-300 dark:border-slate-700 flex items-center justify-center shrink-0`}
-                      >
-                        {theme.id === "light" ? (
-                          <Sun className="w-5 h-5 text-amber-500" />
-                        ) : (
-                          <Layers className="w-5 h-5 text-indigo-400" />
-                        )}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3.5">
+                        <div
+                          className={`w-10 h-10 rounded-xl bg-gradient-to-tr ${theme.previewGradient} border border-slate-300 dark:border-slate-700 flex items-center justify-center shrink-0`}
+                        >
+                          {theme.id === "light" ? (
+                            <Sun className="w-5 h-5 text-amber-500" />
+                          ) : (
+                            <Layers className="w-5 h-5 text-indigo-400" />
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">
+                            {theme.name}
+                          </h4>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            {theme.description}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">
-                          {theme.name}
-                        </h4>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
-                          {theme.description}
-                        </p>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPreviewThemeId(theme.id);
+                            document.getElementById("theme-palette-inspector-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                          }}
+                          className="px-2.5 py-1 rounded-lg text-xs font-bold border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center gap-1"
+                        >
+                          <Eye className="w-3 h-3" />
+                          <span>Inspect</span>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectTheme(theme.id);
+                          }}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+                            isSelected
+                              ? "bg-indigo-600 text-white shadow-sm"
+                              : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
+                          }`}
+                        >
+                          {isSelected ? "Active" : "Apply"}
+                        </button>
                       </div>
                     </div>
 
-                    <button
-                      className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
-                        isSelected
-                          ? "bg-indigo-600 text-white shadow-sm"
-                          : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
-                      }`}
-                    >
-                      {isSelected ? "Active" : "Apply"}
-                    </button>
+                    {/* Miniature Color Palette Sample Strip */}
+                    <div className="pt-2 border-t border-slate-200/80 dark:border-slate-800/60 flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                        <Palette className="w-3 h-3 text-indigo-500" />
+                        Palette Sample:
+                      </span>
+                      <div className="flex items-center gap-1.5 w-44">
+                        {theme.paletteSample.map((swatch, sIdx) => (
+                          <div
+                            key={sIdx}
+                            title={`${swatch.name} (${swatch.hex}) - ${swatch.role}`}
+                            className="flex-1 h-3 rounded-md border border-slate-300/60 dark:border-white/10"
+                            style={{ backgroundColor: swatch.hex }}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 );
               })}

@@ -14,7 +14,7 @@ import {
   ExternalLink,
   Activity
 } from "lucide-react";
-import confetti from "canvas-confetti";
+import { triggerConfetti } from "../utils/confetti";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -56,7 +56,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
 
   const handleTaskCheck = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      confetti({
+      triggerConfetti({
         particleCount: 45,
         spread: 60,
         origin: { y: 0.8 },

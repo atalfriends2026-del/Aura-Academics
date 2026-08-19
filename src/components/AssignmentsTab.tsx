@@ -11,7 +11,7 @@ import {
   FileText,
   Search,
 } from "lucide-react";
-import confetti from "canvas-confetti";
+import { triggerConfetti } from "../utils/confetti";
 
 interface AssignmentsTabProps {
   assignments: Assignment[];
@@ -38,7 +38,7 @@ export const AssignmentsTab: React.FC<AssignmentsTabProps> = ({
 
   const handleSimulateSubmit = (title: string, id: string) => {
     onToggleAssignmentStatus(id);
-    confetti({
+    triggerConfetti({
       particleCount: 60,
       spread: 70,
       origin: { y: 0.7 },

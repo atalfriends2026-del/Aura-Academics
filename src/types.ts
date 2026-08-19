@@ -30,6 +30,12 @@ export type ThemeId =
   | "light"
   | "dark";
 
+export interface ThemeColorSample {
+  name: string;
+  hex: string;
+  role: "primary" | "secondary" | "accent" | "surface" | "glow";
+}
+
 export interface ThemeOption {
   id: ThemeId;
   name: string;
@@ -43,6 +49,7 @@ export interface ThemeOption {
   badgeLabel?: string;
   hasParticles: boolean;
   hasSpirals: boolean;
+  paletteSample: ThemeColorSample[];
 }
 
 export interface UserThemeSettings {
