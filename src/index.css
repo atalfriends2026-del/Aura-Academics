@@ -76,6 +76,102 @@
 }
 
 /* AI in Education & Galaxy Glassmorphism Theme Overrides */
+/* Global smooth theme cross-fade transition */
+html,
+body,
+#root,
+.galaxy-header,
+.galaxy-sidebar,
+.galaxy-card-crystal,
+.theme-backdrop-layer {
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enchanted Forest Theme Overrides (.theme-forest) */
+.theme-forest .galaxy-card-crystal {
+  background: rgba(10, 26, 15, 0.74) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-color: rgba(34, 197, 94, 0.35) !important;
+  box-shadow: 0 4px 20px rgba(6, 18, 10, 0.65), inset 0 0 15px rgba(34, 197, 94, 0.08) !important;
+}
+
+.theme-forest .galaxy-card-crystal:hover {
+  border-color: rgba(74, 222, 128, 0.65) !important;
+  box-shadow: 0 0 25px rgba(34, 197, 94, 0.35), inset 0 0 20px rgba(234, 179, 8, 0.15) !important;
+}
+
+.theme-forest .galaxy-header {
+  background: rgba(8, 22, 13, 0.84) !important;
+  backdrop-filter: blur(24px) !important;
+  border-bottom-color: rgba(34, 197, 94, 0.35) !important;
+}
+
+.theme-forest .galaxy-sidebar {
+  background: rgba(6, 18, 10, 0.86) !important;
+  backdrop-filter: blur(24px) !important;
+  border-right-color: rgba(34, 197, 94, 0.25) !important;
+}
+
+/* Ocean Mode Theme Overrides (.theme-ocean & .theme-ocean-mode) */
+.theme-ocean-mode .galaxy-card-crystal,
+.theme-ocean .galaxy-card-crystal {
+  background: rgba(1, 24, 45, 0.72) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-color: rgba(6, 182, 212, 0.35) !important;
+  box-shadow: 0 4px 20px rgba(1, 20, 37, 0.6), inset 0 0 15px rgba(6, 182, 212, 0.08) !important;
+}
+
+.theme-ocean-mode .galaxy-card-crystal:hover,
+.theme-ocean .galaxy-card-crystal:hover {
+  border-color: rgba(34, 211, 238, 0.65) !important;
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.35), inset 0 0 20px rgba(59, 130, 246, 0.2) !important;
+}
+
+.theme-ocean-mode .galaxy-header,
+.theme-ocean .galaxy-header {
+  background: rgba(1, 20, 37, 0.82) !important;
+  backdrop-filter: blur(24px) !important;
+  border-bottom-color: rgba(6, 182, 212, 0.35) !important;
+}
+
+.theme-ocean-mode .galaxy-sidebar,
+.theme-ocean .galaxy-sidebar {
+  background: rgba(1, 18, 34, 0.85) !important;
+  backdrop-filter: blur(24px) !important;
+  border-right-color: rgba(6, 182, 212, 0.25) !important;
+}
+
+/* Aurora Borealis Theme Overrides */
+.theme-aurora .galaxy-card-crystal {
+  background: rgba(1, 20, 20, 0.72) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 4px 20px rgba(1, 16, 16, 0.6), inset 0 0 15px rgba(16, 185, 129, 0.08) !important;
+}
+
+.theme-aurora .galaxy-card-crystal:hover {
+  border-color: rgba(52, 211, 153, 0.65) !important;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.35), inset 0 0 20px rgba(6, 182, 212, 0.2) !important;
+}
+
+.theme-aurora .galaxy-header {
+  background: rgba(1, 16, 16, 0.82) !important;
+  backdrop-filter: blur(24px) !important;
+  border-bottom-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+.theme-aurora .galaxy-sidebar {
+  background: rgba(1, 14, 14, 0.85) !important;
+  backdrop-filter: blur(24px) !important;
+  border-right-color: rgba(16, 185, 129, 0.25) !important;
+}
+
 .theme-ai-education .galaxy-card-crystal {
   background: rgba(6, 12, 38, 0.7) !important;
   backdrop-filter: blur(20px) !important;

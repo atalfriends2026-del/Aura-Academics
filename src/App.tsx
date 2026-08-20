@@ -101,6 +101,11 @@ export default function App() {
 
     // Clean previous theme classes
     root.classList.remove(
+      "theme-forest",
+      "theme-ocean-mode",
+      "theme-ocean",
+      "theme-aurora",
+      "theme-ai-multiple-fields",
       "theme-ai-education",
       "theme-multiple-galaxy",
       "theme-starlight-andromeda",
@@ -111,7 +116,11 @@ export default function App() {
       "theme-light"
     );
 
-    root.classList.add(`theme-${themeSettings.activeThemeId}`);
+    if (themeSettings.activeThemeId === "ocean-mode") {
+      root.classList.add("theme-ocean-mode", "theme-ocean");
+    } else {
+      root.classList.add(`theme-${themeSettings.activeThemeId}`);
+    }
 
     const isGalaxy = isGalaxyTheme(themeSettings.activeThemeId);
     if (isGalaxy || themeSettings.activeThemeId === "dark") {

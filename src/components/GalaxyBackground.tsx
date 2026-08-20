@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { UserThemeSettings } from "../types";
+import forestWallpaper from "../assets/images/forest_wallpaper.jpg";
 import oceanModeWallpaper from "../assets/images/ocean_mode_wallpaper.jpg";
 import auroraWallpaper from "../assets/images/aurora_wallpaper.jpg";
 import aiMultipleFieldsWallpaper from "../assets/images/ai_multiple_fields_wallpaper.jpg";
@@ -134,6 +135,7 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
   };
 
   // Color schemes per theme
+  const isForest = activeThemeId === "forest";
   const isOceanMode = activeThemeId === "ocean-mode";
   const isAurora = activeThemeId === "aurora";
   const isAIMultipleFields = activeThemeId === "ai-multiple-fields";
@@ -143,7 +145,9 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
   const isSupernova = activeThemeId === "supernova-gold";
   const isVoid = activeThemeId === "deep-void";
 
-  const primaryGlow = isOceanMode
+  const primaryGlow = isForest
+    ? "#22c55e"
+    : isOceanMode
     ? "#06b6d4"
     : isAurora
     ? "#10b981"
@@ -159,7 +163,9 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
     ? "#f59e0b"
     : "#9333ea"; // Multiple Galaxy default
 
-  const secondaryGlow = isOceanMode
+  const secondaryGlow = isForest
+    ? "#eab308"
+    : isOceanMode
     ? "#3b82f6"
     : isAurora
     ? "#06b6d4"
@@ -181,10 +187,12 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
       style={opacityStyle}
       aria-hidden="true"
     >
-      {/* Deep Cosmos / Ocean Abyss Background */}
+      {/* Deep Cosmos / Forest / Ocean Abyss Background */}
       <div
         className={`absolute inset-0 ${
-          isOceanMode
+          isForest
+            ? "bg-[#06140b] bg-radial-[at_50%_40%] from-[#0f2d18] via-[#091b10] to-[#040e07]"
+            : isOceanMode
             ? "bg-[#011422] bg-radial-[at_50%_40%] from-[#02314d] via-[#011b2b] to-[#010b14]"
             : isAurora
             ? "bg-[#010e14] bg-radial-[at_50%_40%] from-[#042426] via-[#02131a] to-[#01080e]"
@@ -193,6 +201,32 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
             : "bg-[#04010e] bg-radial-[at_50%_50%] from-[#0e0428] via-[#050214] to-[#020008]"
         }`}
       />
+
+      {/* 🌲 THEME: ENCHANTED FOREST SANCTUARY MASTERPIECE */}
+      {isForest && (
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          {/* 🌲 ULTRA HIGH-DEFINITION ENCHANTED FOREST WALLPAPER (As Requested) */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none">
+            <img
+              src={forestWallpaper}
+              alt="Enchanted Forest Sanctuary Masterpiece"
+              className="w-full h-full object-cover object-center transition-transform duration-1000 scale-100"
+              referrerPolicy="no-referrer"
+            />
+            {/* Ambient Forest Twilight Lighting & Depth Mask */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/30 mix-blend-multiply" />
+            <div className="absolute inset-0 bg-radial from-transparent via-transparent to-black/50" />
+          </div>
+
+          {/* Ambient Warm Sunset God Rays & Moss Emerald Shimmer */}
+          <div className="absolute inset-0 pointer-events-none opacity-60">
+            <div className="absolute top-[8%] left-1/2 -translate-x-1/2 w-[750px] h-[380px] bg-gradient-to-b from-amber-400/20 via-emerald-500/20 to-teal-600/15 rounded-full blur-[105px]" />
+            <div className="absolute top-[15%] left-[8%] w-[480px] h-[350px] bg-emerald-500/20 rounded-full blur-[90px]" />
+            <div className="absolute top-[18%] right-[8%] w-[480px] h-[350px] bg-amber-400/15 rounded-full blur-[90px]" />
+            <div className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[850px] h-[320px] bg-emerald-600/15 rounded-full blur-[95px]" />
+          </div>
+        </div>
+      )}
 
       {/* 🌊 THEME 0: TROPICAL CORAL REEF OCEAN MODE MASTERPIECE */}
       {isOceanMode && (
@@ -350,7 +384,7 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
       )}
 
       {/* 🌌 THEME 4+: MULTI-GALAXY UNIVERSE COMPOSITION */}
-      {!isVoid && !isOceanMode && !isAurora && !isAIMultipleFields && !isAIEducation && !isAndromeda && !isNebula && (
+      {!isVoid && !isForest && !isOceanMode && !isAurora && !isAIMultipleFields && !isAIEducation && !isAndromeda && !isNebula && (
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           
           {/* 🌌 ULTRA HIGH-DEFINITION MULTIPLE GALAXY MASTERPIECE WALLPAPER (As Requested) */}

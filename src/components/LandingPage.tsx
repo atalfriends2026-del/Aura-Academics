@@ -46,12 +46,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunchDashboard }) =
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto space-y-6">
-            
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/80 shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 mr-2 text-indigo-500" />
-              Next-Gen AI Academic Intelligence Platform
-            </span>
-
             <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.12]">
               Empower Learning with{" "}
               <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">

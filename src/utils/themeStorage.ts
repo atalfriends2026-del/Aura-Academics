@@ -2,6 +2,27 @@ import { ThemeId, ThemeOption, UserThemeSettings } from "../types";
 
 export const THEME_OPTIONS: ThemeOption[] = [
   {
+    id: "forest",
+    name: "Enchanted Forest",
+    category: "galaxy",
+    tagline: "Ancient Mossy Forest Sanctuary & Twilight Sunset",
+    description: "Serene ancient woodland featuring a winding mossy footpath, majestic stag deer beside an ancient oak, gentle crystal stream with pebbles, and golden sunset twilight sky glowing through lush green foliage.",
+    primaryColor: "#22c55e",
+    secondaryColor: "#eab308",
+    accentGlow: "rgba(34, 197, 94, 0.6)",
+    previewGradient: "from-[#0a1a0f] via-[#122818] via-[#1e3a24] to-[#0d1f13]",
+    badgeLabel: "FEATURED • ENCHANTED FOREST",
+    hasParticles: true,
+    hasSpirals: true,
+    paletteSample: [
+      { name: "Moss Emerald", hex: "#22c55e", role: "primary" },
+      { name: "Sunset Gold", hex: "#eab308", role: "secondary" },
+      { name: "Twilight Lavender", hex: "#c084fc", role: "accent" },
+      { name: "Canopy Glow", hex: "#4ade80", role: "glow" },
+      { name: "Ancient Bark Surface", hex: "#0a1a0f", role: "surface" },
+    ],
+  },
+  {
     id: "ocean-mode",
     name: "Ocean Mode",
     category: "galaxy",
@@ -129,22 +150,22 @@ export const THEME_OPTIONS: ThemeOption[] = [
   },
   {
     id: "cosmic-nebula",
-    name: "Cosmic Nebula Swirl",
+    name: "Cyberpunk Night Market",
     category: "ai-theme",
-    tagline: "Cyberpunk Neon Night Market & Holographic Stream",
-    description: "Atmospheric rainy cyberpunk night market street illuminated by vibrant neon signs (Cybernetics, Ramen-Ya, Datastream, Synth Drinks), holographic wireframe fox, and reflective neon puddles.",
+    tagline: "Atmospheric Rainy Cyberpunk Neon City & Holographic Fox",
+    description: "Atmospheric rainy cyberpunk night market street illuminated by vibrant neon signs (Cybernetics, Ramen-Ya, Datastream, Synth Drinks), glowing holographic fox and globe, flying hover vehicles, and reflective neon rain puddles.",
     primaryColor: "#00f0ff",
     secondaryColor: "#ec4899",
     accentGlow: "rgba(0, 240, 255, 0.55)",
     previewGradient: "from-[#080214] via-[#1f0938] via-[#051a2e] to-[#04010a]",
-    badgeLabel: "CYBER NEON • NIGHT MARKET",
+    badgeLabel: "FEATURED • CYBERPUNK NIGHT MARKET",
     hasParticles: true,
     hasSpirals: true,
     paletteSample: [
       { name: "Electric Cyan", hex: "#00f0ff", role: "primary" },
       { name: "Synthwave Pink", hex: "#ec4899", role: "secondary" },
       { name: "Neon Violet", hex: "#9333ea", role: "accent" },
-      { name: "Puddle Glint", hex: "#22d3ee", role: "glow" },
+      { name: "Rain Puddle Glint", hex: "#22d3ee", role: "glow" },
       { name: "Midnight Alley", hex: "#080214", role: "surface" },
     ],
   },
@@ -234,10 +255,10 @@ export const THEME_OPTIONS: ThemeOption[] = [
   },
 ];
 
-const THEME_STORAGE_KEY = "aura_academics_theme_settings_v4";
+const THEME_STORAGE_KEY = "aura_academics_theme_settings_v7";
 
 export const DEFAULT_THEME_SETTINGS: UserThemeSettings = {
-  activeThemeId: "ocean-mode", // Default to the vibrant Tropical Ocean Reef Masterpiece!
+  activeThemeId: "forest", // Default to the breathtaking Enchanted Forest Sanctuary Masterpiece!
   enableStarParticles: true,
   enableCosmicGlow: true,
   enableSpiralRotation: true,
@@ -246,7 +267,7 @@ export const DEFAULT_THEME_SETTINGS: UserThemeSettings = {
   enableCyberHUD: true,
   galaxyWallpaperIntensity: 95,
   cardGlassmorphism: "crystal",
-  accentPalette: "ocean-cyan",
+  accentPalette: "emerald-aurora",
   fontSizeScale: "normal",
   soundEffects: false,
 };
@@ -274,6 +295,7 @@ export const saveThemeSettings = (settings: UserThemeSettings): UserThemeSetting
 
 export const isGalaxyTheme = (themeId: ThemeId): boolean => {
   return [
+    "forest",
     "ocean-mode",
     "aurora",
     "ai-multiple-fields",

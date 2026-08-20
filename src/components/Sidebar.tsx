@@ -1,5 +1,6 @@
 import React from "react";
 import { DashboardTab, UserProfile } from "../types";
+import auraAcademicsLogo from "../assets/images/aura_academics_logo.jpg";
 import {
   ArrowLeft,
   BookOpenText,
@@ -239,23 +240,33 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Top Header Logo */}
         <div className="p-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 shrink-0">
           {!isCollapsed ? (
-            <div className="flex items-center space-x-2.5 overflow-hidden">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white flex items-center justify-center shrink-0 shadow-md">
-                <GraduationCap className="w-5 h-5" />
+            <div className="flex items-center space-x-3 overflow-hidden">
+              <div className="w-10 h-10 rounded-2xl overflow-hidden ring-2 ring-indigo-500/40 shadow-lg shadow-indigo-500/20 shrink-0 bg-white dark:bg-slate-900 flex items-center justify-center">
+                <img
+                  src={auraAcademicsLogo}
+                  alt="Aura Academics Logo"
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
               </div>
               <div className="min-w-0">
-                <span className="font-extrabold text-sm text-slate-900 dark:text-white block truncate leading-tight">
-                  EduDashboard
+                <span className="font-black text-sm text-slate-900 dark:text-white block truncate leading-tight tracking-tight">
+                  Aura<span className="text-indigo-600 dark:text-indigo-400 ml-0.5">Academics</span>
                 </span>
-                <span className="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 block truncate">
-                  Student Learning Hub
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 block truncate">
+                  Learn • Grow • Succeed
                 </span>
               </div>
             </div>
           ) : (
             <div className="w-full flex justify-center">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center shrink-0 shadow-md">
-                <GraduationCap className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-2xl overflow-hidden ring-2 ring-indigo-500/40 shadow-lg shadow-indigo-500/20 shrink-0 bg-white dark:bg-slate-900 flex items-center justify-center" title="Aura Academics - Learn • Grow • Succeed">
+                <img
+                  src={auraAcademicsLogo}
+                  alt="Aura Academics Logo"
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
               </div>
             </div>
           )}

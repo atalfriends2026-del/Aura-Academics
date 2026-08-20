@@ -42,6 +42,7 @@ export const ThemePalettePreviewCard: React.FC<ThemePalettePreviewCardProps> = (
     setTimeout(() => setCopiedHex(null), 1800);
   };
 
+  const isForest = theme.id === "forest";
   const isOcean = theme.id === "ocean-mode";
   const isAurora = theme.id === "aurora";
   const isAIMultipleFields = theme.id === "ai-multiple-fields";
@@ -51,7 +52,9 @@ export const ThemePalettePreviewCard: React.FC<ThemePalettePreviewCardProps> = (
       id="theme-palette-inspector-card"
       className="relative overflow-hidden rounded-3xl p-6 sm:p-7 border bg-slate-950/90 text-white shadow-2xl transition-all duration-500 backdrop-blur-2xl"
       style={{
-        borderColor: isOcean
+        borderColor: isForest
+          ? "rgba(34, 197, 94, 0.5)"
+          : isOcean
           ? "rgba(6, 182, 212, 0.5)"
           : isAurora
           ? "rgba(16, 185, 129, 0.5)"

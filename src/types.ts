@@ -18,6 +18,7 @@ export type DashboardTab =
   | "theme-settings";
 
 export type ThemeId =
+  | "forest"
   | "ocean-mode"
   | "aurora"
   | "ai-multiple-fields"

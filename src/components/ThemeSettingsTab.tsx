@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { UserThemeSettings, ThemeId } from "../types";
 import { THEME_OPTIONS, isGalaxyTheme } from "../utils/themeStorage";
 import { ThemePalettePreviewCard } from "./ThemePalettePreviewCard";
+import forestWallpaper from "../assets/images/forest_wallpaper.jpg";
 import oceanModeWallpaper from "../assets/images/ocean_mode_wallpaper.jpg";
 import auroraWallpaper from "../assets/images/aurora_wallpaper.jpg";
 import aiMultipleFieldsWallpaper from "../assets/images/ai_multiple_fields_wallpaper.jpg";
@@ -30,6 +31,7 @@ import {
   Network,
   Globe,
   Boxes,
+  Trees,
 } from "lucide-react";
 
 interface ThemeSettingsProps {
@@ -49,6 +51,8 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
 
   const getThemeWallpaper = (themeId: ThemeId) => {
     switch (themeId) {
+      case "forest":
+        return forestWallpaper;
       case "ocean-mode":
         return oceanModeWallpaper;
       case "aurora":
@@ -86,7 +90,7 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
           <div className="space-y-2">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-black tracking-wider uppercase">
               <BrainCircuit className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-              <span>Next-Gen Holographic Learning Canvas</span>
+              <span>Holographic Learning Canvas</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-2.5">
               <span>Theme & Cosmic Settings</span>
@@ -193,6 +197,7 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
               {THEME_OPTIONS.filter((t) => t.category === "galaxy" || t.category === "ai-theme").map((theme) => {
                 const isSelected = settings.activeThemeId === theme.id;
                 const isInspected = inspectedTheme.id === theme.id;
+                const isForest = theme.id === "forest";
                 const isOcean = theme.id === "ocean-mode";
                 const isAurora = theme.id === "aurora";
                 const isAIMultipleFields = theme.id === "ai-multiple-fields";
@@ -210,7 +215,9 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                     }}
                     className={`group relative overflow-hidden rounded-3xl p-5 cursor-pointer transition-all duration-300 border text-left flex flex-col justify-between ${
                       isSelected
-                        ? isOcean
+                        ? isForest
+                          ? "ring-2 ring-emerald-400 border-emerald-300 shadow-2xl shadow-emerald-500/40 bg-slate-950 text-white scale-[1.02]"
+                          : isOcean
                           ? "ring-2 ring-cyan-400 border-cyan-300 shadow-2xl shadow-cyan-500/40 bg-slate-950 text-white scale-[1.02]"
                           : isAurora
                           ? "ring-2 ring-emerald-400 border-emerald-300 shadow-2xl shadow-emerald-500/40 bg-slate-950 text-white scale-[1.02]"
@@ -234,8 +241,22 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                     <div
                       className={`h-36 rounded-2xl mb-4 relative overflow-hidden bg-gradient-to-tr ${theme.previewGradient} border border-white/10 flex items-center justify-center`}
                     >
-                      {/* Ocean Mode Visual Preview */}
-                      {isOcean ? (
+                      {/* Forest Mode Visual Preview */}
+                      {isForest ? (
+                        <div className="absolute inset-0 overflow-hidden">
+                          <img
+                            src={forestWallpaper}
+                            alt="Enchanted Forest Sanctuary Masterpiece"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            referrerPolicy="no-referrer"
+                          />
+                          <div className="absolute inset-0 bg-radial from-transparent via-transparent to-black/40" />
+                          <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] text-emerald-300 font-bold border border-emerald-400/40 shadow-xs">
+                            <Trees className="w-3 h-3 text-emerald-300 animate-pulse" />
+                            <span>Enchanted Forest</span>
+                          </div>
+                        </div>
+                      ) : isOcean ? (
                         <div className="absolute inset-0 overflow-hidden">
                           <img
                             src={oceanModeWallpaper}
@@ -354,7 +375,9 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
 
                       {theme.badgeLabel && (
                         <span className={`absolute bottom-2 left-2 z-10 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider backdrop-blur-md text-white border ${
-                          isOcean
+                          isForest
+                            ? "bg-emerald-600/80 border-emerald-300/80 shadow-md shadow-emerald-500/50"
+                            : isOcean
                             ? "bg-cyan-600/80 border-cyan-300/80 shadow-md shadow-cyan-500/50"
                             : isAurora
                             ? "bg-emerald-600/80 border-emerald-300/80 shadow-md shadow-emerald-500/50"
@@ -376,7 +399,9 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
 
                       {isSelected && (
                         <div className={`absolute top-2 right-2 w-7 h-7 rounded-full text-white flex items-center justify-center shadow-md ${
-                          isOcean
+                          isForest
+                            ? "bg-emerald-500 shadow-emerald-500/50"
+                            : isOcean
                             ? "bg-cyan-500 shadow-cyan-500/50"
                             : isAurora
                             ? "bg-emerald-500 shadow-emerald-500/50"
@@ -402,6 +427,9 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                       <div className="flex items-center justify-between">
                         <h4 className="font-extrabold text-sm text-white flex items-center gap-1.5">
                           <span>{theme.name}</span>
+                          {isForest && (
+                            <span className="text-[10px] text-emerald-300 font-bold">★ Forest Masterpiece</span>
+                          )}
                           {isOcean && (
                             <span className="text-[10px] text-cyan-300 font-bold">★ Ocean Masterpiece</span>
                           )}
@@ -412,7 +440,7 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                             <span className="text-[10px] text-cyan-300 font-bold">★ AI Masterpiece</span>
                           )}
                           {isNebula && (
-                            <span className="text-[10px] text-fuchsia-300 font-bold">★ Cyber Neon</span>
+                            <span className="text-[10px] text-fuchsia-300 font-bold">★ Cyberpunk Night Market</span>
                           )}
                           {isAndromeda && (
                             <span className="text-[10px] text-sky-300 font-bold">★ AI Ecosystem</span>
