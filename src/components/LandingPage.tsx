@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ViewMode } from "../types";
+import auraAcademicsLogo from "../assets/images/aura_academics_logo.jpg";
 import {
   Sparkles,
   ArrowRight,
@@ -366,9 +367,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunchDashboard }) =
       {/* FOOTER */}
       <footer className="bg-slate-950 text-slate-500 text-xs py-8 border-t border-slate-800 text-center">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <GraduationCap className="w-4 h-4 text-indigo-400" />
-            <span className="font-bold text-slate-300">Aura Academics Inc.</span>
+          <div className="flex items-center space-x-2.5">
+            <div className="w-6 h-6 rounded-md overflow-hidden border border-indigo-400/40 shrink-0">
+              <img
+                src={auraAcademicsLogo}
+                alt="Aura Academics Logo"
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <span className="font-bold text-slate-300">Aura Academics</span>
           </div>
           <p>&copy; 2026 Aura Academics. Empowering students worldwide.</p>
         </div>

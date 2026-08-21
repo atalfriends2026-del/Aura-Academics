@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { UserProfile, UserThemeSettings } from "../types";
 import { ThemeSettingsTab } from "./ThemeSettingsTab";
+import auraAcademicsLogo from "../assets/images/aura_academics_logo.jpg";
 import {
   X,
   Palette,
@@ -266,14 +267,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {/* TAB 4: ABOUT */}
           {activeTab === "about" && (
             <div className="max-w-2xl mx-auto space-y-4 text-center py-4">
-              <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-pink-500 text-white flex items-center justify-center mx-auto shadow-xl shadow-purple-500/30">
-                <Sparkles className="w-8 h-8" />
+              <div className="w-20 h-20 rounded-3xl overflow-hidden mx-auto shadow-xl shadow-purple-500/30 border border-indigo-200/50 dark:border-indigo-800/50 bg-slate-950 flex items-center justify-center">
+                <img
+                  src={auraAcademicsLogo}
+                  alt="Aura Academics Logo"
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
               </div>
               <h3 className="text-xl font-black text-slate-900 dark:text-white">
-                Aura Academics • Multiple Galaxy Edition
+                Aura Academics
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
-                Empowering secondary students with NCERT curriculum, 4K video modules, AI-powered tutoring, digital achievements, and immersive cosmological UI themes.
+                Empowering secondary students with NCERT curriculum, 4K video modules, AI-powered tutoring, digital achievements, and multiple screen themes including Clean Studio Light.
               </p>
               <div className="pt-4 flex items-center justify-center space-x-2 text-xs font-bold text-slate-400">
                 <ShieldCheck className="w-4 h-4 text-emerald-500" />

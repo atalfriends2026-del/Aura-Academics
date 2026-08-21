@@ -1,5 +1,6 @@
 import React from "react";
 import { ViewMode, UserProfile, NotificationItem, UserThemeSettings } from "../types";
+import auraAcademicsLogo from "../assets/images/aura_academics_logo.jpg";
 import {
   GraduationCap,
   Compass,
@@ -62,8 +63,13 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => onViewChange("landing")}
               className="flex items-center space-x-3 group focus:outline-none"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform">
-                <GraduationCap className="w-6 h-6" />
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform border border-indigo-200/50 dark:border-indigo-800/50 bg-slate-950 flex items-center justify-center shrink-0">
+                <img
+                  src={auraAcademicsLogo}
+                  alt="Aura Academics Logo"
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
               </div>
               <div className="text-left">
                 <span className="text-xl font-black tracking-tight bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">

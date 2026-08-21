@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { UserThemeSettings } from "../types";
+import lightModeWallpaper from "../assets/images/light_mode_wallpaper.jpg";
 import forestWallpaper from "../assets/images/forest_wallpaper.jpg";
 import oceanModeWallpaper from "../assets/images/ocean_mode_wallpaper.jpg";
 import auroraWallpaper from "../assets/images/aurora_wallpaper.jpg";
@@ -7,7 +8,7 @@ import aiMultipleFieldsWallpaper from "../assets/images/ai_multiple_fields_wallp
 import multipleGalaxyWallpaper from "../assets/images/multiple_galaxy_wallpaper.jpg";
 import aiEducationWallpaper from "../assets/images/ai_education_wallpaper.jpg";
 import starlightAndromedaWallpaper from "../assets/images/starlight_andromeda_wallpaper.jpg";
-import cosmicNebulaSwirlWallpaper from "../assets/images/cosmic_nebula_swirl_wallpaper.jpg";
+import cyberpunkNightMarketWallpaper from "../assets/images/cyberpunk_night_market_wallpaper.jpg";
 
 interface GalaxyBackgroundProps {
   settings: UserThemeSettings;
@@ -135,17 +136,20 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
   };
 
   // Color schemes per theme
+  const isLight = activeThemeId === "light";
   const isForest = activeThemeId === "forest";
   const isOceanMode = activeThemeId === "ocean-mode";
   const isAurora = activeThemeId === "aurora";
   const isAIMultipleFields = activeThemeId === "ai-multiple-fields";
   const isAIEducation = activeThemeId === "ai-education";
   const isAndromeda = activeThemeId === "starlight-andromeda";
-  const isNebula = activeThemeId === "cosmic-nebula";
+  const isNebula = activeThemeId === "cosmic-nebula" || activeThemeId === "cyberpunk-city";
   const isSupernova = activeThemeId === "supernova-gold";
   const isVoid = activeThemeId === "deep-void";
 
-  const primaryGlow = isForest
+  const primaryGlow = isLight
+    ? "#4f46e5"
+    : isForest
     ? "#22c55e"
     : isOceanMode
     ? "#06b6d4"
@@ -163,7 +167,9 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
     ? "#f59e0b"
     : "#9333ea"; // Multiple Galaxy default
 
-  const secondaryGlow = isForest
+  const secondaryGlow = isLight
+    ? "#64748b"
+    : isForest
     ? "#eab308"
     : isOceanMode
     ? "#3b82f6"
@@ -187,10 +193,12 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
       style={opacityStyle}
       aria-hidden="true"
     >
-      {/* Deep Cosmos / Forest / Ocean Abyss Background */}
+      {/* Deep Cosmos / Forest / Ocean Abyss / Light Background */}
       <div
         className={`absolute inset-0 ${
-          isForest
+          isLight
+            ? "bg-[#f8fafc]"
+            : isForest
             ? "bg-[#06140b] bg-radial-[at_50%_40%] from-[#0f2d18] via-[#091b10] to-[#040e07]"
             : isOceanMode
             ? "bg-[#011422] bg-radial-[at_50%_40%] from-[#02314d] via-[#011b2b] to-[#010b14]"
@@ -201,6 +209,30 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
             : "bg-[#04010e] bg-radial-[at_50%_50%] from-[#0e0428] via-[#050214] to-[#020008]"
         }`}
       />
+
+      {/* ☀️ THEME: CLEAN LIGHT MODE (WHITE & GREY WALLPAPER) */}
+      {isLight && (
+        <div className="absolute inset-0 w-full h-full overflow-hidden bg-slate-100">
+          {/* ☀️ ULTRA CLEAN MINIMALIST WHITE & SLATE GREY WALLPAPER */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none">
+            <img
+              src={lightModeWallpaper}
+              alt="Clean Light Studio White and Grey Wallpaper"
+              className="w-full h-full object-cover object-center transition-transform duration-1000 scale-100"
+              referrerPolicy="no-referrer"
+            />
+            {/* Ambient Soft Daylight Vignette & Mask */}
+            <div className="absolute inset-0 bg-gradient-to-t from-white/70 via-transparent to-slate-100/50" />
+            <div className="absolute inset-0 bg-radial from-transparent via-transparent to-slate-300/30" />
+          </div>
+
+          {/* Ambient Soft Daylight Glow */}
+          <div className="absolute inset-0 pointer-events-none opacity-40">
+            <div className="absolute top-[5%] left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-indigo-200/40 via-slate-200/50 to-transparent rounded-full blur-[100px]" />
+            <div className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[850px] h-[320px] bg-slate-300/40 rounded-full blur-[95px]" />
+          </div>
+        </div>
+      )}
 
       {/* 🌲 THEME: ENCHANTED FOREST SANCTUARY MASTERPIECE */}
       {isForest && (
@@ -358,14 +390,14 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
         </div>
       )}
 
-      {/* 🌆 THEME 3: COSMIC NEBULA SWIRL (CYBERPUNK NEON NIGHT MARKET MASTERPIECE) */}
+      {/* 🌆 THEME 7: CYBERPUNK NIGHT MARKET MASTERPIECE */}
       {isNebula && (
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           {/* 🌆 ULTRA HIGH-DEFINITION CYBERPUNK NIGHT MARKET WALLPAPER (As Requested) */}
           <div className="absolute inset-0 w-full h-full pointer-events-none">
             <img
-              src={cosmicNebulaSwirlWallpaper}
-              alt="Cosmic Nebula Swirl Cyberpunk Night Market Masterpiece"
+              src={cyberpunkNightMarketWallpaper}
+              alt="Cyberpunk Night Market Masterpiece"
               className="w-full h-full object-cover object-center transition-transform duration-1000 scale-100"
               referrerPolicy="no-referrer"
             />
@@ -454,13 +486,13 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
         </div>
       )}
 
-      {/* Twinkling Starfield Particle Canvas */}
-      {enableStarParticles && (
+      {/* Twinkling Starfield Particle Canvas (Disabled for Light mode) */}
+      {enableStarParticles && !isLight && (
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
       )}
 
-      {/* Periodic Shooting Stars / Meteors */}
-      {enableShootingStars &&
+      {/* Periodic Shooting Stars / Meteors (Disabled for Light mode) */}
+      {enableShootingStars && !isLight &&
         shootingStars.map((meteor) => (
           <div
             key={meteor.id}
@@ -475,7 +507,9 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
         ))}
 
       {/* Cosmic Vignette & Color Balance Gradient Overlay */}
-      <div className="absolute inset-0 bg-radial-[at_50%_50%] from-transparent via-[#04010e]/20 to-[#04010e]/60" />
+      {!isLight && (
+        <div className="absolute inset-0 bg-radial-[at_50%_50%] from-transparent via-[#04010e]/20 to-[#04010e]/60" />
+      )}
     </div>
   );
 };

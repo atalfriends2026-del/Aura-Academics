@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { UserThemeSettings, ThemeId } from "../types";
 import { THEME_OPTIONS, isGalaxyTheme } from "../utils/themeStorage";
 import { ThemePalettePreviewCard } from "./ThemePalettePreviewCard";
+import lightModeWallpaper from "../assets/images/light_mode_wallpaper.jpg";
 import forestWallpaper from "../assets/images/forest_wallpaper.jpg";
 import oceanModeWallpaper from "../assets/images/ocean_mode_wallpaper.jpg";
 import auroraWallpaper from "../assets/images/aurora_wallpaper.jpg";
@@ -9,7 +10,7 @@ import aiMultipleFieldsWallpaper from "../assets/images/ai_multiple_fields_wallp
 import multipleGalaxyWallpaper from "../assets/images/multiple_galaxy_wallpaper.jpg";
 import aiEducationWallpaper from "../assets/images/ai_education_wallpaper.jpg";
 import starlightAndromedaWallpaper from "../assets/images/starlight_andromeda_wallpaper.jpg";
-import cosmicNebulaSwirlWallpaper from "../assets/images/cosmic_nebula_swirl_wallpaper.jpg";
+import cyberpunkNightMarketWallpaper from "../assets/images/cyberpunk_night_market_wallpaper.jpg";
 import {
   Palette,
   Sparkles,
@@ -51,6 +52,8 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
 
   const getThemeWallpaper = (themeId: ThemeId) => {
     switch (themeId) {
+      case "light":
+        return lightModeWallpaper;
       case "forest":
         return forestWallpaper;
       case "ocean-mode":
@@ -66,7 +69,8 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
       case "starlight-andromeda":
         return starlightAndromedaWallpaper;
       case "cosmic-nebula":
-        return cosmicNebulaSwirlWallpaper;
+      case "cyberpunk-city":
+        return cyberpunkNightMarketWallpaper;
       default:
         return null;
     }
@@ -197,6 +201,7 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
               {THEME_OPTIONS.filter((t) => t.category === "galaxy" || t.category === "ai-theme").map((theme) => {
                 const isSelected = settings.activeThemeId === theme.id;
                 const isInspected = inspectedTheme.id === theme.id;
+                const isLight = theme.id === "light";
                 const isForest = theme.id === "forest";
                 const isOcean = theme.id === "ocean-mode";
                 const isAurora = theme.id === "aurora";
@@ -204,7 +209,7 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                 const isAIEdu = theme.id === "ai-education";
                 const isMultipleGalaxy = theme.id === "multiple-galaxy";
                 const isAndromeda = theme.id === "starlight-andromeda";
-                const isNebula = theme.id === "cosmic-nebula";
+                const isNebula = theme.id === "cosmic-nebula" || theme.id === "cyberpunk-city";
 
                 return (
                   <div
@@ -215,7 +220,9 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                     }}
                     className={`group relative overflow-hidden rounded-3xl p-5 cursor-pointer transition-all duration-300 border text-left flex flex-col justify-between ${
                       isSelected
-                        ? isForest
+                        ? isLight
+                          ? "ring-2 ring-indigo-500 border-indigo-400 shadow-2xl shadow-indigo-500/40 bg-slate-900 text-white scale-[1.02]"
+                          : isForest
                           ? "ring-2 ring-emerald-400 border-emerald-300 shadow-2xl shadow-emerald-500/40 bg-slate-950 text-white scale-[1.02]"
                           : isOcean
                           ? "ring-2 ring-cyan-400 border-cyan-300 shadow-2xl shadow-cyan-500/40 bg-slate-950 text-white scale-[1.02]"
@@ -241,8 +248,22 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                     <div
                       className={`h-36 rounded-2xl mb-4 relative overflow-hidden bg-gradient-to-tr ${theme.previewGradient} border border-white/10 flex items-center justify-center`}
                     >
-                      {/* Forest Mode Visual Preview */}
-                      {isForest ? (
+                      {/* Light Mode Visual Preview */}
+                      {isLight ? (
+                        <div className="absolute inset-0 overflow-hidden">
+                          <img
+                            src={lightModeWallpaper}
+                            alt="Clean Light Mode White and Grey Studio"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            referrerPolicy="no-referrer"
+                          />
+                          <div className="absolute inset-0 bg-radial from-transparent via-transparent to-slate-400/20" />
+                          <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] text-indigo-900 font-bold border border-indigo-200 shadow-xs">
+                            <Sun className="w-3 h-3 text-amber-500 animate-spin-slow" />
+                            <span>Clean Light</span>
+                          </div>
+                        </div>
+                      ) : isForest ? (
                         <div className="absolute inset-0 overflow-hidden">
                           <img
                             src={forestWallpaper}
@@ -316,11 +337,11 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                           </div>
                         </div>
                       ) : isNebula ? (
-                        /* Cosmic Nebula Swirl Cyber Night Market Masterpiece Preview */
+                        /* Cyberpunk Night Market Masterpiece Preview */
                         <div className="absolute inset-0 overflow-hidden">
                           <img
-                            src={cosmicNebulaSwirlWallpaper}
-                            alt="Cosmic Nebula Swirl Cyberpunk Night Market"
+                            src={cyberpunkNightMarketWallpaper}
+                            alt="Cyberpunk Night Market Masterpiece"
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                             referrerPolicy="no-referrer"
                           />
@@ -375,7 +396,9 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
 
                       {theme.badgeLabel && (
                         <span className={`absolute bottom-2 left-2 z-10 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider backdrop-blur-md text-white border ${
-                          isForest
+                          isLight
+                            ? "bg-indigo-600/90 border-indigo-300 shadow-md shadow-indigo-500/50"
+                            : isForest
                             ? "bg-emerald-600/80 border-emerald-300/80 shadow-md shadow-emerald-500/50"
                             : isOcean
                             ? "bg-cyan-600/80 border-cyan-300/80 shadow-md shadow-cyan-500/50"
@@ -399,7 +422,9 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
 
                       {isSelected && (
                         <div className={`absolute top-2 right-2 w-7 h-7 rounded-full text-white flex items-center justify-center shadow-md ${
-                          isForest
+                          isLight
+                            ? "bg-indigo-600 shadow-indigo-500/50"
+                            : isForest
                             ? "bg-emerald-500 shadow-emerald-500/50"
                             : isOcean
                             ? "bg-cyan-500 shadow-cyan-500/50"
@@ -427,6 +452,9 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                       <div className="flex items-center justify-between">
                         <h4 className="font-extrabold text-sm text-white flex items-center gap-1.5">
                           <span>{theme.name}</span>
+                          {isLight && (
+                            <span className="text-[10px] text-indigo-300 font-bold">★ Daylight Studio</span>
+                          )}
                           {isForest && (
                             <span className="text-[10px] text-emerald-300 font-bold">★ Forest Masterpiece</span>
                           )}
@@ -508,7 +536,9 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                         }}
                         className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
                           isSelected
-                            ? isOcean
+                            ? isLight
+                              ? "bg-indigo-600 text-white font-black shadow-md shadow-indigo-500/40"
+                              : isOcean
                               ? "bg-cyan-400 text-slate-950 font-black shadow-md shadow-cyan-500/40"
                               : isAurora
                               ? "bg-emerald-400 text-slate-950 font-black shadow-md shadow-emerald-500/40"

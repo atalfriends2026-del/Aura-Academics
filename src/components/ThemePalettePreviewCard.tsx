@@ -42,17 +42,21 @@ export const ThemePalettePreviewCard: React.FC<ThemePalettePreviewCardProps> = (
     setTimeout(() => setCopiedHex(null), 1800);
   };
 
+  const isLight = theme.id === "light";
   const isForest = theme.id === "forest";
   const isOcean = theme.id === "ocean-mode";
   const isAurora = theme.id === "aurora";
   const isAIMultipleFields = theme.id === "ai-multiple-fields";
+  const isCyberpunk = theme.id === "cyberpunk-city" || theme.id === "cosmic-nebula";
 
   return (
     <div
       id="theme-palette-inspector-card"
       className="relative overflow-hidden rounded-3xl p-6 sm:p-7 border bg-slate-950/90 text-white shadow-2xl transition-all duration-500 backdrop-blur-2xl"
       style={{
-        borderColor: isForest
+        borderColor: isLight
+          ? "rgba(99, 102, 241, 0.6)"
+          : isForest
           ? "rgba(34, 197, 94, 0.5)"
           : isOcean
           ? "rgba(6, 182, 212, 0.5)"
@@ -60,6 +64,8 @@ export const ThemePalettePreviewCard: React.FC<ThemePalettePreviewCardProps> = (
           ? "rgba(16, 185, 129, 0.5)"
           : isAIMultipleFields
           ? "rgba(0, 240, 255, 0.5)"
+          : isCyberpunk
+          ? "rgba(0, 240, 255, 0.6)"
           : "rgba(147, 51, 234, 0.4)",
         boxShadow: `0 20px 50px -10px ${theme.accentGlow || "rgba(0,0,0,0.5)"}`,
       }}

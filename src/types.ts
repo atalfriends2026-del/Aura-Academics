@@ -18,14 +18,15 @@ export type DashboardTab =
   | "theme-settings";
 
 export type ThemeId =
+  | "multiple-galaxy"
+  | "ai-education"
+  | "ai-multiple-fields"
+  | "aurora"
   | "forest"
   | "ocean-mode"
-  | "aurora"
-  | "ai-multiple-fields"
-  | "ai-education"
-  | "multiple-galaxy"
-  | "starlight-andromeda"
+  | "cyberpunk-city"
   | "cosmic-nebula"
+  | "starlight-andromeda"
   | "supernova-gold"
   | "deep-void"
   | "light"
