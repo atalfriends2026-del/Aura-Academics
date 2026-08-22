@@ -11,6 +11,8 @@ import multipleGalaxyWallpaper from "../assets/images/multiple_galaxy_wallpaper.
 import aiEducationWallpaper from "../assets/images/ai_education_wallpaper.jpg";
 import starlightAndromedaWallpaper from "../assets/images/starlight_andromeda_wallpaper.jpg";
 import cyberpunkNightMarketWallpaper from "../assets/images/cyberpunk_night_market_wallpaper.jpg";
+import teslaAutopilotWallpaper from "../assets/images/tesla_autopilot_wallpaper.jpg";
+import bmwM8Wallpaper from "../assets/images/bmw_m8_wallpaper.jpg";
 import {
   Palette,
   Sparkles,
@@ -33,6 +35,8 @@ import {
   Globe,
   Boxes,
   Trees,
+  Car,
+  Zap,
 } from "lucide-react";
 
 interface ThemeSettingsProps {
@@ -52,6 +56,10 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
 
   const getThemeWallpaper = (themeId: ThemeId) => {
     switch (themeId) {
+      case "tesla-future":
+        return teslaAutopilotWallpaper;
+      case "bmw-m8":
+        return bmwM8Wallpaper;
       case "light":
         return lightModeWallpaper;
       case "forest":
@@ -199,6 +207,8 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {THEME_OPTIONS.filter((t) => t.category === "galaxy" || t.category === "ai-theme").map((theme) => {
+                const isTesla = theme.id === "tesla-future";
+                const isBmwM8 = theme.id === "bmw-m8";
                 const isSelected = settings.activeThemeId === theme.id;
                 const isInspected = inspectedTheme.id === theme.id;
                 const isLight = theme.id === "light";
@@ -220,7 +230,11 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                     }}
                     className={`group relative overflow-hidden rounded-3xl p-5 cursor-pointer transition-all duration-300 border text-left flex flex-col justify-between ${
                       isSelected
-                        ? isLight
+                        ? isBmwM8
+                          ? "ring-2 ring-amber-500 border-amber-400 shadow-2xl shadow-amber-500/40 bg-slate-950 text-white scale-[1.02]"
+                          : isTesla
+                          ? "ring-2 ring-red-500 border-red-400 shadow-2xl shadow-red-500/40 bg-slate-950 text-white scale-[1.02]"
+                          : isLight
                           ? "ring-2 ring-indigo-500 border-indigo-400 shadow-2xl shadow-indigo-500/40 bg-slate-900 text-white scale-[1.02]"
                           : isForest
                           ? "ring-2 ring-emerald-400 border-emerald-300 shadow-2xl shadow-emerald-500/40 bg-slate-950 text-white scale-[1.02]"
@@ -248,8 +262,36 @@ export const ThemeSettingsTab: React.FC<ThemeSettingsProps> = ({
                     <div
                       className={`h-36 rounded-2xl mb-4 relative overflow-hidden bg-gradient-to-tr ${theme.previewGradient} border border-white/10 flex items-center justify-center`}
                     >
-                      {/* Light Mode Visual Preview */}
-                      {isLight ? (
+                      {/* BMW M8 Visual Preview */}
+                      {isBmwM8 ? (
+                        <div className="absolute inset-0 overflow-hidden">
+                          <img
+                            src={bmwM8Wallpaper}
+                            alt="BMW M8 Competition Luxury Sports Car"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            referrerPolicy="no-referrer"
+                          />
+                          <div className="absolute inset-0 bg-radial from-transparent via-transparent to-black/40" />
+                          <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] text-amber-300 font-bold border border-amber-500/40 shadow-xs">
+                            <Car className="w-3 h-3 text-amber-400 animate-pulse" />
+                            <span>BMW M8</span>
+                          </div>
+                        </div>
+                      ) : isTesla ? (
+                        <div className="absolute inset-0 overflow-hidden">
+                          <img
+                            src={teslaAutopilotWallpaper}
+                            alt="Tesla Autopilot & Self-Driving Car"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            referrerPolicy="no-referrer"
+                          />
+                          <div className="absolute inset-0 bg-radial from-transparent via-transparent to-black/40" />
+                          <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] text-cyan-300 font-bold border border-red-500/40 shadow-xs">
+                            <Car className="w-3 h-3 text-red-400 animate-pulse" />
+                            <span>Tesla Autopilot</span>
+                          </div>
+                        </div>
+                      ) : isLight ? (
                         <div className="absolute inset-0 overflow-hidden">
                           <img
                             src={lightModeWallpaper}

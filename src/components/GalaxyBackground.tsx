@@ -9,6 +9,8 @@ import multipleGalaxyWallpaper from "../assets/images/multiple_galaxy_wallpaper.
 import aiEducationWallpaper from "../assets/images/ai_education_wallpaper.jpg";
 import starlightAndromedaWallpaper from "../assets/images/starlight_andromeda_wallpaper.jpg";
 import cyberpunkNightMarketWallpaper from "../assets/images/cyberpunk_night_market_wallpaper.jpg";
+import teslaAutopilotWallpaper from "../assets/images/tesla_autopilot_wallpaper.jpg";
+import bmwM8Wallpaper from "../assets/images/bmw_m8_wallpaper.jpg";
 
 interface GalaxyBackgroundProps {
   settings: UserThemeSettings;
@@ -137,6 +139,8 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
 
   // Color schemes per theme
   const isLight = activeThemeId === "light";
+  const isBmwM8 = activeThemeId === "bmw-m8";
+  const isTesla = activeThemeId === "tesla-future";
   const isForest = activeThemeId === "forest";
   const isOceanMode = activeThemeId === "ocean-mode";
   const isAurora = activeThemeId === "aurora";
@@ -149,6 +153,10 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
 
   const primaryGlow = isLight
     ? "#4f46e5"
+    : isBmwM8
+    ? "#f59e0b"
+    : isTesla
+    ? "#e82127"
     : isForest
     ? "#22c55e"
     : isOceanMode
@@ -169,6 +177,10 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
 
   const secondaryGlow = isLight
     ? "#64748b"
+    : isBmwM8
+    ? "#3b82f6"
+    : isTesla
+    ? "#00f0ff"
     : isForest
     ? "#eab308"
     : isOceanMode
@@ -415,8 +427,58 @@ export const GalaxyBackground: React.FC<GalaxyBackgroundProps> = ({ settings }) 
         </div>
       )}
 
+      {/* 🚗 THEME: TESLA AUTOPILOT & SELF-DRIVING MASTERPIECE */}
+      {isTesla && (
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          {/* 🚗 ULTRA HIGH-DEFINITION TESLA SELF-DRIVING WALLPAPER */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none">
+            <img
+              src={teslaAutopilotWallpaper}
+              alt="Tesla Self-Driving Autonomous Autopilot"
+              className="w-full h-full object-cover object-center transition-transform duration-1000 scale-100"
+              referrerPolicy="no-referrer"
+            />
+            {/* Ambient Tech Vignette & High-Contrast Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30 mix-blend-multiply" />
+            <div className="absolute inset-0 bg-radial from-transparent via-transparent to-black/50" />
+          </div>
+
+          {/* Ambient Cyber Radar & Supercharger Cyan Glows */}
+          <div className="absolute inset-0 pointer-events-none opacity-60">
+            <div className="absolute bottom-[20%] left-[25%] w-[450px] h-[300px] bg-cyan-500/25 rounded-full blur-[90px]" />
+            <div className="absolute top-[20%] right-[15%] w-[400px] h-[300px] bg-red-600/20 rounded-full blur-[90px]" />
+            <div className="absolute bottom-[10%] right-[20%] w-[500px] h-[250px] bg-blue-500/20 rounded-full blur-[80px]" />
+          </div>
+        </div>
+      )}
+
+      {/* 🏎️ THEME: BMW M8 COMPETITION COUPE MASTERPIECE */}
+      {isBmwM8 && (
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          {/* 🏎️ ULTRA HIGH-DEFINITION BMW M8 WALLPAPER */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none">
+            <img
+              src={bmwM8Wallpaper}
+              alt="BMW M8 Competition Luxury Sports Car"
+              className="w-full h-full object-cover object-center transition-transform duration-1000 scale-100"
+              referrerPolicy="no-referrer"
+            />
+            {/* Ambient Sunset Vignette & Asphalt Reflection Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30 mix-blend-multiply" />
+            <div className="absolute inset-0 bg-radial from-transparent via-transparent to-black/40" />
+          </div>
+
+          {/* Ambient Angel Eye Golden Amber & M Power Blue Glows */}
+          <div className="absolute inset-0 pointer-events-none opacity-60">
+            <div className="absolute top-[25%] left-[20%] w-[450px] h-[300px] bg-amber-500/20 rounded-full blur-[90px]" />
+            <div className="absolute bottom-[20%] right-[15%] w-[400px] h-[300px] bg-blue-600/20 rounded-full blur-[90px]" />
+            <div className="absolute bottom-[10%] left-[30%] w-[500px] h-[250px] bg-amber-400/15 rounded-full blur-[80px]" />
+          </div>
+        </div>
+      )}
+
       {/* 🌌 THEME 4+: MULTI-GALAXY UNIVERSE COMPOSITION */}
-      {!isVoid && !isForest && !isOceanMode && !isAurora && !isAIMultipleFields && !isAIEducation && !isAndromeda && !isNebula && (
+      {!isBmwM8 && !isTesla && !isVoid && !isForest && !isOceanMode && !isAurora && !isAIMultipleFields && !isAIEducation && !isAndromeda && !isNebula && (
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           
           {/* 🌌 ULTRA HIGH-DEFINITION MULTIPLE GALAXY MASTERPIECE WALLPAPER (As Requested) */}

@@ -42,6 +42,8 @@ export const ThemePalettePreviewCard: React.FC<ThemePalettePreviewCardProps> = (
     setTimeout(() => setCopiedHex(null), 1800);
   };
 
+  const isTesla = theme.id === "tesla-future";
+  const isBmwM8 = theme.id === "bmw-m8";
   const isLight = theme.id === "light";
   const isForest = theme.id === "forest";
   const isOcean = theme.id === "ocean-mode";
@@ -54,7 +56,11 @@ export const ThemePalettePreviewCard: React.FC<ThemePalettePreviewCardProps> = (
       id="theme-palette-inspector-card"
       className="relative overflow-hidden rounded-3xl p-6 sm:p-7 border bg-slate-950/90 text-white shadow-2xl transition-all duration-500 backdrop-blur-2xl"
       style={{
-        borderColor: isLight
+        borderColor: isBmwM8
+          ? "rgba(245, 158, 11, 0.6)"
+          : isTesla
+          ? "rgba(232, 33, 39, 0.6)"
+          : isLight
           ? "rgba(99, 102, 241, 0.6)"
           : isForest
           ? "rgba(34, 197, 94, 0.5)"

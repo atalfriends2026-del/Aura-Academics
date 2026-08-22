@@ -1,6 +1,7 @@
 import React from "react";
 import { UserProfile, Course, Assignment, AchievementBadge } from "../types";
 import { BadgeSummaryWidget } from "./BadgeSummaryWidget";
+import { DailyGoalsWidget } from "./DailyGoalsWidget";
 import {
   Award,
   BookOpen,
@@ -192,6 +193,9 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
         </div>
 
       </div>
+
+      {/* Daily Study Objectives & Goals Widget */}
+      <DailyGoalsWidget onOpenFocusTimer={() => onSwitchTab("focus")} />
 
       {/* Main Grid: Grade Performance Trend & Upcoming Deadlines Checklist */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

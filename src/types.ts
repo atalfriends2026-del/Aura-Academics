@@ -25,6 +25,8 @@ export type ThemeId =
   | "forest"
   | "ocean-mode"
   | "cyberpunk-city"
+  | "tesla-future"
+  | "bmw-m8"
   | "cosmic-nebula"
   | "starlight-andromeda"
   | "supernova-gold"
@@ -245,6 +247,17 @@ export interface UploadedSubjectPDF {
   description?: string;
   previewText?: string;
   splitPages?: Array<{ pageNumber: number; title: string; excerpt: string }>;
+}
+
+export interface DailyGoal {
+  id: string;
+  title: string;
+  category: "Study" | "Reading" | "Practice" | "Revision" | "Homework" | "Focus";
+  targetMinutes?: number;
+  completedMinutes?: number;
+  isCompleted: boolean;
+  createdAt: string;
+  priority?: "High" | "Medium" | "Normal";
 }
 
 
